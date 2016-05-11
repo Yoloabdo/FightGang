@@ -40,6 +40,7 @@ class LoginViewController: UIViewController {
     
     
     @IBAction func loginBtn(sender: UIButton) {
+        login(userNameTextField.text!, pass: passTextField.text!)
         
     }
     
@@ -89,7 +90,8 @@ class LoginViewController: UIViewController {
         }
     }
     
-    func register(user: String, pass: String, alias: String) -> Void {
+    // register function.
+    func register(user: String, pass: String, alias: String) -> Bool {
         let url = NSURL(string: "\(BASE_URL)/players")!
         
         let request = NSMutableURLRequest(URL: url)
@@ -107,15 +109,44 @@ class LoginViewController: UIViewController {
                 print(error)
             }
         }
-        
         task.resume()
+
+        return false
     }
+
+    func login(user: String, pass: String) -> Bool {
+        let url = NSURL(string: "\(BASE_URL)/players/me/")!
+        
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
+        request.addValue(user, forHTTPHeaderField: "username")
+        request.addValue(pass, forHTTPHeaderField: "password")
+
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { data, response, error in
+            if let response = response, data = data {
+                print(response)
+                print(String(data: data, encoding: NSUTF8StringEncoding))
+            } else {
+                print(error)
+            }
+        }
+        task.resume()
+        
+        return false
+
+    }
+    
 
 }
 
 
 extension LoginViewController: UITextFieldDelegate {
     
+    
+    // hitting next or done in keyboard
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         if textField == userNameTextField {
             
@@ -131,6 +162,7 @@ extension LoginViewController: UITextFieldDelegate {
        
     }
     
+    // if user touched any part of the screen, lay off the keyboard.
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesBegan(touches, withEvent: event)
         userNameTextField.resignFirstResponder()
