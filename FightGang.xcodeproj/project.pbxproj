@@ -13,6 +13,7 @@
 		B421A4721CE3938000B7C4E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B421A4711CE3938000B7C4E8 /* Assets.xcassets */; };
 		B421A4751CE3938000B7C4E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B421A4731CE3938000B7C4E8 /* LaunchScreen.storyboard */; };
 		B421A47D1CE393C100B7C4E8 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B421A47C1CE393C100B7C4E8 /* DataService.swift */; };
+		B49A991F1CE3C471009B0BF7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49A991E1CE3C471009B0BF7 /* User.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,8 @@
 		B421A4741CE3938000B7C4E8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B421A4761CE3938000B7C4E8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B421A47C1CE393C100B7C4E8 /* DataService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		B49A991D1CE3C200009B0BF7 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		B49A991E1CE3C471009B0BF7 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +64,8 @@
 				B421A46E1CE3938000B7C4E8 /* Main.storyboard */,
 				B421A47C1CE393C100B7C4E8 /* DataService.swift */,
 				B421A47E1CE3943500B7C4E8 /* Resources */,
+				B49A991D1CE3C200009B0BF7 /* MyPlayground.playground */,
+				B49A991E1CE3C471009B0BF7 /* User.swift */,
 			);
 			path = FightGang;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B49A991F1CE3C471009B0BF7 /* User.swift in Sources */,
 				B421A46D1CE3938000B7C4E8 /* LoginViewController.swift in Sources */,
 				B421A46B1CE3938000B7C4E8 /* AppDelegate.swift in Sources */,
 				B421A47D1CE393C100B7C4E8 /* DataService.swift in Sources */,

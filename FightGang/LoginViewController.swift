@@ -40,6 +40,8 @@ class LoginViewController: UIViewController {
     
     
     @IBAction func loginBtn(sender: UIButton) {
+        passTextField.resignFirstResponder()
+        userNameTextField.resignFirstResponder()
         login(userNameTextField.text!, pass: passTextField.text!)
         
     }
@@ -91,7 +93,7 @@ class LoginViewController: UIViewController {
     }
     
     // register function.
-    func register(user: String, pass: String, alias: String) -> Bool {
+    func register(user: String, pass: String, alias: String) {
         let url = NSURL(string: "\(BASE_URL)/players")!
         
         let request = NSMutableURLRequest(URL: url)
@@ -100,45 +102,92 @@ class LoginViewController: UIViewController {
         request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
         request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding);
         
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if let response = response, data = data {
-                print(response)
-                print(String(data: data, encoding: NSUTF8StringEncoding))
-            } else {
-                print(error)
-            }
-        }
-        task.resume()
-
-        return false
+        networkRequest(request)
     }
 
-    func login(user: String, pass: String) -> Bool {
+    func  login(user: String, pass: String) {
         let url = NSURL(string: "\(BASE_URL)/players/me/")!
         
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
-        request.addValue(user, forHTTPHeaderField: "username")
-        request.addValue(pass, forHTTPHeaderField: "password")
-
+        
+        
+        let loginString = NSString(format: "%@:%@", user, pass)
+        let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
+        let base64LoginString = loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        
+        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+        
+        if networkRequest(request) {
+            
+        }
+    }
+    
+    
+    func networkRequest(request: NSURLRequest) -> Bool {
+        
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
             if let response = response, data = data {
-                print(response)
-                print(String(data: data, encoding: NSUTF8StringEncoding))
-            } else {
+                // check login status via response code
+                    var json: Dictionary<String, AnyObject>?
+                    do {
+                        json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? Dictionary<String, AnyObject>
+                        if let res = response as? NSHTTPURLResponse where res.statusCode == 200 || res.statusCode == 201{
+                            // getting ID from results
+                            
+                            let userObj = User(dictionary: json!)
+                            let id = userObj.id!
+                            
+                            dispatch_async(dispatch_get_main_queue(), {() in
+                                print("User logged in succefully")
+                                self.defaults.setObject(id, forKey: "id")
+                            })
+                            return
+                        }else {
+                            dispatch_async(dispatch_get_main_queue(), {() in
+                                guard let message = json!["message"] as? String else {
+                                    self.showErrorAlert("Error Login/ register", msg: "Unknow error")
+                                    return
+                                }
+                                self.showErrorAlert("Error Login/ register", msg: message)
+                            })
+                        }}
+                        
+                        catch {
+                            print(response)
+                            print(String(data: data, encoding: NSUTF8StringEncoding))
+                            return
+                        }
+            }
+                
+                
+            else {
                 print(error)
             }
         }
         task.resume()
         
-        return false
+        if defaults.valueForKey("id") != nil {
+            return true
+        }else {
+            return false
+        }
 
     }
     
+    let defaults = NSUserDefaults.standardUserDefaults()
+    
+    func showErrorAlert(title: String, msg: String) -> Void {
+        let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
+        alert.addAction(action)
+        
+        presentViewController(alert, animated: true, completion: nil)
+    }
+
 
 }
 
