@@ -24,19 +24,35 @@ class LoginViewController: UIViewController {
     
     @IBOutlet weak var registerButton: UIButton! {
         didSet{
-            registerButton.enabled = false
+            disableBtn(registerButton)
         }
     }
     @IBOutlet weak var loginButton: UIButton!{
         didSet{
-            loginButton.enabled = false
+            disableBtn(loginButton)
         }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
+    func enableBtn(btn: UIButton) -> Void {
+        btn.enabled = true
+        borderlayer(btn.layer, color: UIColor.blueColor())
 
+    }
+    
+    func disableBtn(btn: UIButton) -> Void {
+        btn.enabled = false
+        borderlayer(btn.layer, color: UIColor.grayColor())
+
+    }
+
+    func borderlayer(layer: CALayer, color: UIColor) -> Void {
+        layer.cornerRadius = 5
+        layer.borderWidth = 1
+        layer.borderColor = color.CGColor
+    }
     
     
     @IBAction func loginBtn(sender: UIButton) {
@@ -54,14 +70,14 @@ class LoginViewController: UIViewController {
     
     @IBAction func enableBtns() -> Void {
         if checkLoginTextFields() {
-            loginButton.enabled = true
+            enableBtn(loginButton)
         }else{
-            loginButton.enabled = false
+            disableBtn(loginButton)
         }
         if checkRegisterTextFields() {
-            registerButton.enabled = true
+            enableBtn(registerButton)
         }else {
-            registerButton.enabled = false
+            disableBtn(registerButton)
 
         }
     }
@@ -92,6 +108,10 @@ class LoginViewController: UIViewController {
         }
     }
     
+    struct StoryBoard {
+        static let SegueId = "login"
+    }
+    
     // register function.
     func register(user: String, pass: String, alias: String) {
         let url = NSURL(string: "\(BASE_URL)/players")!
@@ -120,13 +140,14 @@ class LoginViewController: UIViewController {
         
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
         
-        if networkRequest(request) {
-            
-        }
+        networkRequest(request)
+
     }
     
     
-    func networkRequest(request: NSURLRequest) -> Bool {
+    func networkRequest(request: NSURLRequest)
+    {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
@@ -144,15 +165,20 @@ class LoginViewController: UIViewController {
                             dispatch_async(dispatch_get_main_queue(), {() in
                                 print("User logged in succefully")
                                 self.defaults.setObject(id, forKey: "id")
+                                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                                self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
+
                             })
                             return
                         }else {
                             dispatch_async(dispatch_get_main_queue(), {() in
                                 guard let message = json!["message"] as? String else {
                                     self.showErrorAlert("Error Login/ register", msg: "Unknow error")
+
                                     return
                                 }
                                 self.showErrorAlert("Error Login/ register", msg: message)
+                                
                             })
                         }}
                         
@@ -169,18 +195,13 @@ class LoginViewController: UIViewController {
             }
         }
         task.resume()
-        
-        if defaults.valueForKey("id") != nil {
-            return true
-        }else {
-            return false
-        }
 
     }
     
     let defaults = NSUserDefaults.standardUserDefaults()
     
     func showErrorAlert(title: String, msg: String) -> Void {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
         let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
         alert.addAction(action)
