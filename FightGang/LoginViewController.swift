@@ -27,7 +27,11 @@ class LoginViewController: UIViewController {
             registerButton.enabled = false
         }
     }
-    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var loginButton: UIButton!{
+        didSet{
+            loginButton.enabled = false
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -48,9 +52,14 @@ class LoginViewController: UIViewController {
     @IBAction func enableBtns() -> Void {
         if checkLoginTextFields() {
             loginButton.enabled = true
+        }else{
+            loginButton.enabled = false
         }
         if checkRegisterTextFields() {
             registerButton.enabled = true
+        }else {
+            registerButton.enabled = false
+
         }
     }
     
@@ -63,10 +72,10 @@ class LoginViewController: UIViewController {
         }
         
         
-        if user.isEmpty && pass.isEmpty{
-            return false
+        if !user.isEmpty && !pass.isEmpty{
+            return true
         }
-        return true
+        return false
     }
     
     func checkRegisterTextFields() -> Bool {
@@ -108,11 +117,27 @@ class LoginViewController: UIViewController {
 extension LoginViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        
-        return true;
+        if textField == userNameTextField {
+            
+            passTextField.becomeFirstResponder()
+            return true
+            
+        }else {
+            
+            textField.resignFirstResponder()
+            
+            return true;
+        }
+       
     }
     
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        super.touchesBegan(touches, withEvent: event)
+        userNameTextField.resignFirstResponder()
+        passTextField.resignFirstResponder()
+        aliasTextField.resignFirstResponder()
+    }
+
 
 }
 
