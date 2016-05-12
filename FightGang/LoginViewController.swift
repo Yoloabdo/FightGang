@@ -30,10 +30,16 @@ class LoginViewController: UIViewController {
             disableBtn(loginButton)
         }
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        if NSUserDefaults.standardUserDefaults().valueForKey(APIManager.Constants.userNameDefault) != nil {
+            login()
+        }
     }
+    
+    
     func enableBtn(btn: UIButton) -> Void {
         btn.enabled = true
         borderlayer(btn.layer, color: UIColor.blueColor())
@@ -61,23 +67,33 @@ class LoginViewController: UIViewController {
         // saving user, pass to NSUSERDefaults
         defaults.setObject(userNameTextField.text!, forKey: APIManager.Constants.userNameDefault)
         defaults.setObject(passTextField.text!, forKey: APIManager.Constants.userPassDefault)
+
+        
+       login()
+        
+    }
+    
+    func login() {
         
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-
+        
         
         // calling API
         APIManager.sharedInstance().login { (response) in
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-            guard let _ = response as? User else {
-                self.showErrorAlert("Erorr", msg: response as! String)
-                return
-            }
-            self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
-
+            self.responseHandling(response)
             
         }
 
-        
+    }
+    
+    func responseHandling(response: AnyObject) -> Void {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        guard response is User else {
+            self.showErrorAlert("Erorr", msg: response as! String)
+            return
+        }
+        self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
+        return
     }
     
     @IBAction func registerBtn(sender: UIButton) {
@@ -88,14 +104,9 @@ class LoginViewController: UIViewController {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         // calling API
-        APIManager.sharedInstance().register(aliasTextField.text!, completion: { (response) in
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-            guard let _ = response as? User else {
-                self.showErrorAlert("Erorr", msg: response as! String)
-                return
-            }
-            self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
-        })
+        APIManager.sharedInstance().register(aliasTextField.text!){ (response) in
+            self.responseHandling(response)
+        }
         
     }
     

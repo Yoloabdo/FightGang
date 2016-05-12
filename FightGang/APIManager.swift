@@ -9,7 +9,7 @@
 import UIKit
 
 
-
+typealias JsonObject = Dictionary<String, AnyObject>
 
 
 class APIManager: NSObject {
@@ -30,16 +30,25 @@ class APIManager: NSObject {
         }
     }
     
+    var Auth: String? {
+        get {
+            guard let user = username, let pass = passWord else {
+                print("couldn't get user or password")
+                return nil
+            }
+            let loginString = NSString(format: "%@:%@", user, pass)
+            let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
+            return loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        }
+    }
+    
     
     
     
    
    // MARK: -LOGIN function
     func  login(completion: (response:AnyObject) -> Void) {
-        guard let user = username, let pass = passWord else {
-            print("couldn't get user or password")
-            return
-        }
+        
         let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountLogin)!
         
         let request = NSMutableURLRequest(URL: url)
@@ -47,22 +56,42 @@ class APIManager: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
+        guard let auth = Auth else {
+            return
+        }
         
-        let loginString = NSString(format: "%@:%@", user, pass)
-        let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
-        let base64LoginString = loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-        
-        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-        
+        request.setValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
         
         
-        networkRequest(request) { (response) in
-            return completion(response: response)
+        networkRequest(request) { (data, code) in
+            self.loginRequestHandling(data, code: code, completion: { (response) in
+                completion(response: response)
+                return
+            })
         }
         
         
     }
     
+    func  loginRequestHandling(data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
+        do{
+            let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
+            if code == 200 {
+                print("succeful login/ register")
+                completion(response: User(dictionary: json)!)
+                return
+            }else {
+                print("Error login/ register")
+                completion(response: json["message"]!)
+                return
+            }
+        }catch {
+            completion(response: "Error serializing JSON for login user")
+        }
+
+
+    }
+
     // MARK: -Register function
     func register(alias: String, completion: (response:AnyObject) -> Void) {
         guard let user = username, let pass = passWord else {
@@ -78,57 +107,69 @@ class APIManager: NSObject {
         request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
         
         
-        networkRequest(request) { (response) in
-            return completion(response: response)
+        networkRequest(request) { (data, code) in
+            self.loginRequestHandling(data, code: code, completion: { (response) in
+                completion(response: response)
+                return
+            })
+        }
+    }
+    
+    // MARK: -Arena networking
+    
+    func getActivePlayers(completion: (response:AnyObject) -> Void) {
+        let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)")!
+        let request = NSMutableURLRequest(URL: url)
+        
+        request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
+        
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        
+        
+ 
+        networkRequest(request) { (data, code) in
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
+                if code == 200 {
+                    var players = [User]()
+                    for player in json {
+                        players.append(User(dictionary: player)!)
+                    }
+                    completion(response: players)
+                }else{
+                    completion(response: "Error loading Active Players")
+                }
+            } catch{
+                completion(response: "Error serializing JSON for Active Players")
+                
+            }
+
+            
         }
     }
 
 
     // MARK: -NetWork request 
-    private func networkRequest(request: NSURLRequest, completion: AnyObject -> Void)
+    private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
     {
         
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
-            if let response = response, data = data {
+            if let response = response as? NSHTTPURLResponse, data = data {
                 // check login status via response code
-                var json: Dictionary<String, AnyObject>?
-                do {
-                    json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? Dictionary<String, AnyObject>
-                    if let res = response as? NSHTTPURLResponse where res.statusCode == 200 || res.statusCode == 201{
-                        
-                        // Creating user from results
-                        let userObj = User(dictionary: json!)
-                        dispatch_async(dispatch_get_main_queue(), {() in
-                            print("User logged in succefully")
-                            completion(userObj)
-                            
-                        })
-                        return
-                    }else {
-                        dispatch_async(dispatch_get_main_queue(), {() in
-                            guard let message = json!["message"] as? String else {
-                                completion(json!)
-                                return
-                            }
-                            completion(message)
-                            
-                        })
-                    }}
-                    
-                catch {
-                    print(response)
-                    print(String(data: data, encoding: NSUTF8StringEncoding))
-                    return
+                dispatch_async(dispatch_get_main_queue()) {
+                    completion(data: data, responseCode: response.statusCode)
                 }
+                return
             }
                 
-                
             else {
-                completion(error!)
+                print(error)
+                return
             }
         }
         task.resume()
+        
         
     }
 

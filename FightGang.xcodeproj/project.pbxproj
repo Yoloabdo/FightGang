@@ -93,7 +93,6 @@
 			children = (
 				B47F3B741CE408E700303B14 /* Model */,
 				B421A46A1CE3938000B7C4E8 /* AppDelegate.swift */,
-				B49A991E1CE3C471009B0BF7 /* User.swift */,
 				B421A46E1CE3938000B7C4E8 /* Main.storyboard */,
 				B49A99221CE3E876009B0BF7 /* Controller */,
 				B421A47E1CE3943500B7C4E8 /* Resources */,
@@ -117,6 +116,7 @@
 				B421A47C1CE393C100B7C4E8 /* APIManager.swift */,
 				B47F3B751CE4090100303B14 /* SocketIOManager.swift */,
 				B47F3B771CE46B3200303B14 /* APIConstants.swift */,
+				B49A991E1CE3C471009B0BF7 /* User.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";

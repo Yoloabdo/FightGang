@@ -307,16 +307,41 @@
                                     <constraint firstItem="pXY-bi-bMw" firstAttribute="width" secondItem="Zta-3K-fCG" secondAttribute="width" id="npV-nV-NYd"/>
                                 </constraints>
                             </stackView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oDT-eq-L2m">
+                                <rect key="frame" x="20" y="109" width="560" height="442"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="P9k-KD-rsB">
+                                        <rect key="frame" x="0.0" y="28" width="560" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="P9k-KD-rsB" id="uB8-ER-UcY">
+                                            <rect key="frame" x="0.0" y="0.0" width="560" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="LEn-f8-xVL" id="3UF-Z5-gsh"/>
+                                    <outlet property="delegate" destination="LEn-f8-xVL" id="U3w-tg-pq4"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="9pS-bG-fU2" firstAttribute="top" secondItem="oDT-eq-L2m" secondAttribute="bottom" id="9Vh-Vp-j8p"/>
+                            <constraint firstItem="oDT-eq-L2m" firstAttribute="leading" secondItem="IRl-DN-VNw" secondAttribute="leadingMargin" id="PQd-Ms-QBf"/>
                             <constraint firstAttribute="trailingMargin" secondItem="C6d-ho-M6Z" secondAttribute="trailing" id="Tv4-Uj-bnT"/>
                             <constraint firstItem="C6d-ho-M6Z" firstAttribute="leading" secondItem="IRl-DN-VNw" secondAttribute="leadingMargin" id="Vc5-w1-2PW"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="oDT-eq-L2m" secondAttribute="trailing" id="YFE-n1-VTI"/>
                             <constraint firstItem="C6d-ho-M6Z" firstAttribute="top" secondItem="Out-4c-ZRQ" secondAttribute="bottom" id="a5X-Ag-ZBG"/>
                             <constraint firstItem="yt1-B0-Jf7" firstAttribute="width" secondItem="IRl-DN-VNw" secondAttribute="width" multiplier="2:3" id="hhW-Y4-Wnw"/>
+                            <constraint firstItem="oDT-eq-L2m" firstAttribute="top" secondItem="C6d-ho-M6Z" secondAttribute="bottom" id="wRS-Ry-VFo"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="FIGHT GANG" id="apD-uh-BL6"/>
+                    <connections>
+                        <outlet property="tableView" destination="oDT-eq-L2m" id="PgR-3t-IJ7"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LKO-lS-ihE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

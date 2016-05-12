@@ -24,16 +24,8 @@ class User: NSObject {
     
     
     
-    init(id: Int, alias: String, level: Int, hits: Int, stamina: Int, maxStamina: Int) {
-        self.id = id
-        self.alias = alias
-        self.level = level
-        self.hits = hits
-        self.stamina = stamina
-        self.maxStamina = maxStamina
-    }
-    
-    init(dictionary: Dictionary<String, AnyObject>) {
+        
+    init?(dictionary: Dictionary<String, AnyObject>) {
         guard let id = dictionary["id"] as? Int else {
             print("Couldn't interpret ID")
             return
@@ -62,6 +54,8 @@ class User: NSObject {
             print("Couldn't interpret maxStamina")
             return
         }
+        
+        
 
         self.id = id
         self.alias = alias

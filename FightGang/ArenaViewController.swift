@@ -8,19 +8,28 @@
 
 import UIKit
 
-class ArenaViewController: UIViewController {
+class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    var dataArray = [User]()
+    var dataCount = 0
+    
+    struct StoryBoard {
+        static let CellId = "Cell"
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
-//        SocketIOManager.sharedInstance().connectToServerWithID("2") { (userList) in
-//            print(userList)
-////        }
-//        SocketIOManager.sharedInstance().connectToServerWithUsername("abdo") { (userList) in
-//            
-//            print(userList)
-//        }
+        // listen to notification .
+        
+//         load data 
+        APIManager.sharedInstance().getActivePlayers { (response) in
+            let players = response as! [User]
+            self.dataArray = players
+            self.tableView.reloadData()
+        }
         
     }
 
@@ -29,7 +38,21 @@ class ArenaViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    
+    // MARK: -TabelView handling
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dataArray.count ?? 0
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier(StoryBoard.CellId, forIndexPath: indexPath)
+        
+        cell.textLabel?.text = dataArray[indexPath.row].alias
+        
+        return cell
+    }
 
+    
     /*
     // MARK: - Navigation
 
