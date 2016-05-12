@@ -80,30 +80,7 @@ class APIManager: NSObject {
         
         
     }
-    
-    func  loginRequestHandling(user: String, pass: String, data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
-        do{
-            let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-            if code == 200 {
-                print("succeful login/ register")
-                let loginUser = User(dictionary: json)!
-                defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
-                self.defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
-                self.defaults.setObject(pass, forKey: APIManager.Constants.userPassDefault)
-
-                completion(response: loginUser)
-                return
-            }else {
-                print("Error login/ register")
-                completion(response: json["message"]!)
-                return
-            }
-        }catch {
-            completion(response: "Error serializing JSON for login user")
-        }
-
-
-    }
+   
 
     // MARK: -Register function
     func register(user: String, password: String, alias: String, completion: (response:AnyObject) -> Void) {
@@ -125,18 +102,58 @@ class APIManager: NSObject {
         }
     }
     
+    // login/register helper function
+    func  loginRequestHandling(user: String, pass: String, data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
+        do{
+            let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
+            if code == 200 {
+                print("succeful login/ register")
+                let loginUser = User(dictionary: json)!
+                defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
+                self.defaults.setObject(pass, forKey: APIManager.Constants.userPassDefault)
+                
+                completion(response: loginUser)
+                return
+            }else {
+                print("Error login/ register")
+                completion(response: json["message"]!)
+                return
+            }
+        }catch {
+            completion(response: "Error serializing JSON for login user")
+        }
+        
+        
+    }
+    
     // MARK: -Arena networking
     
     func getActivePlayers(completion: (response:AnyObject) -> Void) {
+    
+        arenRequest("GET") { (response) in
+            completion(response: response)
+        }
+
+    }
+    
+    func  enteringArena(completion: (response:AnyObject) -> Void) -> Void {
+        arenRequest("POST") { (response) in
+            completion(response: response)
+        }
+        
+    }
+    func arenRequest(HttpMethod: String, completion: (response:AnyObject) -> Void) -> Void {
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)")!
         let request = NSMutableURLRequest(URL: url)
-        
+        if HttpMethod == "POST" {
+            request.HTTPMethod = "POST"
+        }
         request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
-        
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
         
- 
+        
         networkRequest(request) { (data, code) in
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
@@ -153,7 +170,7 @@ class APIManager: NSObject {
                 completion(response: "Error serializing JSON for Active Players")
                 
             }
-
+            
             
         }
     }

@@ -17,6 +17,7 @@
 		B47F3B781CE46B3200303B14 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47F3B771CE46B3200303B14 /* APIConstants.swift */; };
 		B49A991F1CE3C471009B0BF7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49A991E1CE3C471009B0BF7 /* User.swift */; };
 		B49A99211CE3E871009B0BF7 /* ArenaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49A99201CE3E870009B0BF7 /* ArenaViewController.swift */; };
+		B4FF988F1CE5271900C74543 /* FightTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */; };
 		CA417F45FC65F4FB4C47099C /* Pods_FightGang.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0067A06D74E348924491A /* Pods_FightGang.framework */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		B49A991D1CE3C200009B0BF7 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		B49A991E1CE3C471009B0BF7 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B49A99201CE3E870009B0BF7 /* ArenaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArenaViewController.swift; sourceTree = "<group>"; };
+		B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FightTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				B47F3B741CE408E700303B14 /* Model */,
 				B421A46A1CE3938000B7C4E8 /* AppDelegate.swift */,
 				B421A46E1CE3938000B7C4E8 /* Main.storyboard */,
+				B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */,
 				B49A99221CE3E876009B0BF7 /* Controller */,
 				B421A47E1CE3943500B7C4E8 /* Resources */,
 				B49A991D1CE3C200009B0BF7 /* MyPlayground.playground */,
@@ -252,6 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4FF988F1CE5271900C74543 /* FightTableViewCell.swift in Sources */,
 				B49A99211CE3E871009B0BF7 /* ArenaViewController.swift in Sources */,
 				B49A991F1CE3C471009B0BF7 /* User.swift in Sources */,
 				B421A46D1CE3938000B7C4E8 /* LoginViewController.swift in Sources */,

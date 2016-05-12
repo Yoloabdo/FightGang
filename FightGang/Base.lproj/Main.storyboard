@@ -272,7 +272,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="C6d-ho-M6Z">
+                            <stackView opaque="NO" contentMode="scaleAspectFit" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="C6d-ho-M6Z">
                                 <rect key="frame" x="20" y="64" width="560" height="45"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pXY-bi-bMw">
@@ -296,6 +296,9 @@
                                                 <exclude reference="s5T-6v-l7g"/>
                                             </mask>
                                         </variation>
+                                        <connections>
+                                            <action selector="joinArena:" destination="LEn-f8-xVL" eventType="valueChanged" id="Nem-rq-cug"/>
+                                        </connections>
                                     </segmentedControl>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zta-3K-fCG">
                                         <rect key="frame" x="480" y="0.0" width="80" height="45"/>
@@ -307,17 +310,94 @@
                                     <constraint firstItem="pXY-bi-bMw" firstAttribute="width" secondItem="Zta-3K-fCG" secondAttribute="width" id="npV-nV-NYd"/>
                                 </constraints>
                             </stackView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oDT-eq-L2m">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="75" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oDT-eq-L2m">
                                 <rect key="frame" x="20" y="109" width="560" height="442"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="P9k-KD-rsB">
-                                        <rect key="frame" x="0.0" y="28" width="560" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" rowHeight="75" id="P9k-KD-rsB" customClass="FightTableViewCell" customModule="FightGang" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="560" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="P9k-KD-rsB" id="uB8-ER-UcY">
-                                            <rect key="frame" x="0.0" y="0.0" width="560" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="560" height="74.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="KwW-R5-ieP">
+                                                    <rect key="frame" x="8" y="8" width="544" height="59"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="hei-qY-owR">
+                                                            <rect key="frame" x="0.0" y="0.0" width="464" height="59"/>
+                                                            <subviews>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="749" text="Player name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P7h-Ob-zFc">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="464" height="33"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="GF7-Wk-Gjh">
+                                                                    <rect key="frame" x="0.0" y="33" width="464" height="16"/>
+                                                                    <subviews>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stamina: 50 /100" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2hY-fF-vD8">
+                                                                            <rect key="frame" x="0.0" y="0.0" width="232" height="16"/>
+                                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
+                                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                        </label>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Level: 1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wMA-XS-f39">
+                                                                            <rect key="frame" x="232" y="0.0" width="232" height="16"/>
+                                                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="13"/>
+                                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                        </label>
+                                                                    </subviews>
+                                                                </stackView>
+                                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" misplaced="YES" progress="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="gqi-sE-NE5">
+                                                                    <rect key="frame" x="0.0" y="49" width="464" height="10"/>
+                                                                    <color key="tintColor" red="1" green="0.3539612417905087" blue="0.34322503721208986" alpha="1" colorSpace="calibratedRGB"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="10" id="lGo-0o-Nez"/>
+                                                                    </constraints>
+                                                                </progressView>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="P7h-Ob-zFc" firstAttribute="leading" secondItem="hei-qY-owR" secondAttribute="leading" id="84x-J3-qLN"/>
+                                                                <constraint firstAttribute="trailing" secondItem="gqi-sE-NE5" secondAttribute="trailing" id="CUr-xx-Gf5"/>
+                                                                <constraint firstAttribute="trailing" secondItem="GF7-Wk-Gjh" secondAttribute="trailing" id="CkZ-RS-P70"/>
+                                                                <constraint firstItem="gqi-sE-NE5" firstAttribute="leading" secondItem="hei-qY-owR" secondAttribute="leading" id="PvR-x6-LSX"/>
+                                                                <constraint firstAttribute="trailing" secondItem="P7h-Ob-zFc" secondAttribute="trailing" id="doC-hQ-BA9"/>
+                                                                <constraint firstItem="GF7-Wk-Gjh" firstAttribute="leading" secondItem="hei-qY-owR" secondAttribute="leading" id="hYV-wT-9k7"/>
+                                                            </constraints>
+                                                        </stackView>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g9M-9n-OB2">
+                                                            <rect key="frame" x="474" y="0.0" width="70" height="59"/>
+                                                            <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="70" id="iAy-hn-kcj"/>
+                                                            </constraints>
+                                                            <state key="normal" title="Attack">
+                                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </state>
+                                                            <userDefinedRuntimeAttributes>
+                                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                                    <integer key="value" value="5"/>
+                                                                </userDefinedRuntimeAttribute>
+                                                            </userDefinedRuntimeAttributes>
+                                                        </button>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="KwW-R5-ieP" secondAttribute="trailing" id="3ze-6r-5nA"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="KwW-R5-ieP" secondAttribute="bottom" id="DWu-tC-aM7"/>
+                                                <constraint firstItem="KwW-R5-ieP" firstAttribute="top" secondItem="uB8-ER-UcY" secondAttribute="topMargin" id="FmG-k4-p8L"/>
+                                                <constraint firstItem="KwW-R5-ieP" firstAttribute="leading" secondItem="uB8-ER-UcY" secondAttribute="leadingMargin" id="ogo-pq-tRk"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="playerLevelLabel" destination="wMA-XS-f39" id="3Df-Du-v0S"/>
+                                            <outlet property="playerNameLabel" destination="P7h-Ob-zFc" id="DeB-bM-3QU"/>
+                                            <outlet property="playerStaminaLabel" destination="2hY-fF-vD8" id="O22-U8-Jcw"/>
+                                            <outlet property="staminaProgressView" destination="gqi-sE-NE5" id="xu9-Z5-X1a"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>

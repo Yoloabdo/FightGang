@@ -66,17 +66,17 @@ class LoginViewController: UIViewController {
         passTextField.resignFirstResponder()
         userNameTextField.resignFirstResponder()
         
-        // activte indicator
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-        
-        
         // calling API
-        
         login(userNameTextField.text!, pass: passTextField.text!)
         
     }
     
     func login(user: String, pass: String){
+        
+        // activte indicator
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+
+        // calling API
         APIManager.sharedInstance().login(user, password: pass) { (response) in
             self.responseHandling(response)
             

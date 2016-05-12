@@ -11,6 +11,9 @@ import UIKit
 class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
+
+ 
+    var canAttack = false
     
     var dataArray = [User]()
     var dataCount = 0
@@ -32,11 +35,24 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
         
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func joinArena(sender: UISegmentedControl) {
+        
+        if sender.selectedSegmentIndex == 0 {
+            
+        }else {
+            canAttack = true
+            joinArea()
+        }
+        
     }
+    
+    func joinArea() -> Void {
+        
+        
+    }
+
+    
+    
     
     
     // MARK: -TabelView handling
@@ -45,9 +61,9 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier(StoryBoard.CellId, forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier(StoryBoard.CellId, forIndexPath: indexPath) as! FightTableViewCell
         
-        cell.textLabel?.text = dataArray[indexPath.row].alias
+        cell.cellUser = dataArray[indexPath.row]
         
         return cell
     }
