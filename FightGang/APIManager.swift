@@ -66,7 +66,6 @@ class APIManager: NSObject {
         networkRequest(request) { (data, code) in
             self.loginRequestHandling(data, code: code, completion: { (response) in
                 completion(response: response)
-                return
             })
         }
         
@@ -110,7 +109,7 @@ class APIManager: NSObject {
         networkRequest(request) { (data, code) in
             self.loginRequestHandling(data, code: code, completion: { (response) in
                 completion(response: response)
-                return
+                
             })
         }
     }
@@ -160,7 +159,6 @@ class APIManager: NSObject {
                 dispatch_async(dispatch_get_main_queue()) {
                     completion(data: data, responseCode: response.statusCode)
                 }
-                return
             }
                 
             else {
