@@ -14,6 +14,8 @@ class LoginViewController: UIViewController {
     let BASE_URL = "https://fightgang.herokuapp.com/api"
     
     let API_TOKEN = "p0x0XirrQV66w18372t8l91WCklUqq4K657tT1A06b6m10TuG6n6894S2IHFH3YP"
+    
+    let defaults = NSUserDefaults.standardUserDefaults()
 
     
     @IBOutlet weak var userNameTextField: UITextField!
@@ -56,9 +58,28 @@ class LoginViewController: UIViewController {
     
     
     @IBAction func loginBtn(sender: UIButton) {
+        // resign responder
         passTextField.resignFirstResponder()
         userNameTextField.resignFirstResponder()
-        login(userNameTextField.text!, pass: passTextField.text!)
+        
+        // saving user, pass to NSUSERDefaults
+        defaults.setObject(userNameTextField.text!, forKey: APIManager.Constants.userNameDefault)
+        defaults.setObject(passTextField.text!, forKey: APIManager.Constants.userPassDefault)
+        
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+
+        APIManager.sharedInstance().login { (response) in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            guard let _ = response as? User else {
+                self.showErrorAlert("Erorr", msg: response as! String)
+                return
+            }
+            self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
+
+            
+        }
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+
         
     }
     
@@ -120,88 +141,37 @@ class LoginViewController: UIViewController {
         request.HTTPMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
-        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding);
+        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
         
-        networkRequest(request)
+//        networkRequest(request)
     }
 
-    func  login(user: String, pass: String) {
-        let url = NSURL(string: "\(BASE_URL)/players/me/")!
-        
-        let request = NSMutableURLRequest(URL: url)
-        request.HTTPMethod = "GET"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
-        
-        
-        let loginString = NSString(format: "%@:%@", user, pass)
-        let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
-        let base64LoginString = loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
-        
-        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-        
-        networkRequest(request)
-
-    }
+//    func  login(user: String, pass: String) {
+//        let url = NSURL(string: "\(BASE_URL)/players/me/")!
+//        
+//        let request = NSMutableURLRequest(URL: url)
+//        request.HTTPMethod = "GET"
+//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.addValue(API_TOKEN, forHTTPHeaderField: "X-Api-Token")
+//        
+//        
+//        let loginString = NSString(format: "%@:%@", user, pass)
+//        let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
+//        let base64LoginString = loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+//        
+//        request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+//        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+//        APIManager.sharedInstance().networkRequest(request) { (response) in
+//            
+//        }
+//        
+//        
+////        networkRequest(request)
+//
+//    }
     
-    
-    func networkRequest(request: NSURLRequest)
-    {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if let response = response, data = data {
-                // check login status via response code
-                    var json: Dictionary<String, AnyObject>?
-                    do {
-                        json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? Dictionary<String, AnyObject>
-                        if let res = response as? NSHTTPURLResponse where res.statusCode == 200 || res.statusCode == 201{
-                            // getting ID from results
-                            
-                            let userObj = User(dictionary: json!)
-                            let id = userObj.id!
-                            
-                            dispatch_async(dispatch_get_main_queue(), {() in
-                                print("User logged in succefully")
-                                self.defaults.setObject(id, forKey: "id")
-                                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-                                self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
-
-                            })
-                            return
-                        }else {
-                            dispatch_async(dispatch_get_main_queue(), {() in
-                                guard let message = json!["message"] as? String else {
-                                    self.showErrorAlert("Error Login/ register", msg: "Unknow error")
-
-                                    return
-                                }
-                                self.showErrorAlert("Error Login/ register", msg: message)
-                                
-                            })
-                        }}
-                        
-                        catch {
-                            print(response)
-                            print(String(data: data, encoding: NSUTF8StringEncoding))
-                            return
-                        }
-            }
-                
-                
-            else {
-                print(error)
-            }
-        }
-        task.resume()
-
-    }
-    
-    let defaults = NSUserDefaults.standardUserDefaults()
-    
     func showErrorAlert(title: String, msg: String) -> Void {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
         let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
         alert.addAction(action)

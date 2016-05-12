@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SocketIOClientSwift
 
 class ArenaViewController: UIViewController {
 
@@ -22,6 +21,7 @@ class ArenaViewController: UIViewController {
             
             print(userList)
         }
+        
     }
 
     override func didReceiveMemoryWarning() {
