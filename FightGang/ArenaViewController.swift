@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SocketIOClientSwift
 
 class ArenaViewController: UIViewController {
 
@@ -14,6 +15,9 @@ class ArenaViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        SocketIOManager.sharedInstance().connectToServerWithID("2") { (userList) in
+            print(userList)
+        }
     }
 
     override func didReceiveMemoryWarning() {
