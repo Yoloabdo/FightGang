@@ -79,6 +79,14 @@ class APIManager: NSObject {
         
     }
     
+    func requsetHandling(url: NSURL) -> NSURLRequest {
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        return request
+
+    }
+    
     func  login(completion: (response:AnyObject) -> Void) {
         guard let user = username, let pass = passWord else {
             print("couldn't get user or password")
@@ -106,6 +114,27 @@ class APIManager: NSObject {
         
         
     }
+    
+    // MARK: -Register function.
+    func register(alias: String, completion: (response:AnyObject) -> Void) {
+        guard let user = username, let pass = passWord else {
+            print("couldn't get user or password")
+            return
+        }
+        let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountRegister)
+        
+        let request = NSMutableURLRequest(URL: url!)
+        request.HTTPMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
+        
+        
+        networkRequest(request) { (response) in
+            return completion(response: response)
+        }
+    }
+
 
 
     

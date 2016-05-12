@@ -22,5 +22,6 @@ extension APIManager {
     
     struct Methods {
         static let AccountLogin = "/players/me/"
+        static let AccountRegister = "/players"
     }
 }

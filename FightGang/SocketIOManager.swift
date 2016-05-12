@@ -17,12 +17,15 @@ class SocketIOManager: NSObject {
         super.init()
     }
     
+    struct Constants {
+        static let notficationName = "checkSocket"
+    }
     
     func establishConnection() {
         socket.connect()
         
         socket.onAny { (event) in
-            print("This happened:",event)
+            NSNotificationCenter.defaultCenter().postNotificationName(SocketIOManager.Constants.notficationName, object: nil)
             
         }
     }

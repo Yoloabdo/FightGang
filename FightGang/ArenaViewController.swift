@@ -16,11 +16,11 @@ class ArenaViewController: UIViewController {
         // Do any additional setup after loading the view.
 //        SocketIOManager.sharedInstance().connectToServerWithID("2") { (userList) in
 //            print(userList)
+////        }
+//        SocketIOManager.sharedInstance().connectToServerWithUsername("abdo") { (userList) in
+//            
+//            print(userList)
 //        }
-        SocketIOManager.sharedInstance().connectToServerWithUsername("abdo") { (userList) in
-            
-            print(userList)
-        }
         
     }
 
