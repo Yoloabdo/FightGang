@@ -18,7 +18,7 @@ class APIManager: NSObject {
 
     
 
-    var username: String? {
+    var userName: String? {
         get {
            return defaults.stringForKey(APIManager.Constants.userNameDefault) ?? nil
         }
@@ -32,7 +32,7 @@ class APIManager: NSObject {
     
     var Auth: String? {
         get {
-            guard let user = username, let pass = passWord else {
+            guard let user = userName, let pass = passWord else {
                 print("couldn't get user or password")
                 return nil
             }
@@ -52,7 +52,9 @@ class APIManager: NSObject {
     
    
    // MARK: -LOGIN function
-    func  login(user: String, password: String, completion: (response:AnyObject) -> Void) {
+    func  login(user: String?, password: String?, completion: (response:AnyObject) -> Void) {
+        
+        var user = user, password = password
         
         let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountLogin)!
         
@@ -61,12 +63,17 @@ class APIManager: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
+        // check nullability, get them from defaults if exists
+        if user == nil {
+            user = userName
+            password = passWord
+        }
         
-        request.setValue("Basic \(authrization(user, pass: password))", forHTTPHeaderField: "Authorization")
+        request.setValue("Basic \(authrization(user!, pass: password!))", forHTTPHeaderField: "Authorization")
         
         
         networkRequest(request) { (data, code) in
-            self.loginRequestHandling(user, pass: password, data: data, code: code, completion: { (response) in
+            self.loginRequestHandling(user!, pass: password!, data: data, code: code, completion: { (response) in
                 completion(response: response)
             })
         }

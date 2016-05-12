@@ -34,9 +34,11 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        if NSUserDefaults.standardUserDefaults().valueForKey(APIManager.Constants.userNameDefault) != nil {
-            loginBtn()
+        guard let user = defaults.stringForKey(APIManager.Constants.userNameDefault), pass = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
+            print("No previous login")
+            return
         }
+        login(user, pass: pass)
     }
     
     
@@ -59,7 +61,7 @@ class LoginViewController: UIViewController {
     }
     
     
-    @IBAction func loginBtn() {
+    @IBAction func loginBtn(sender: UIButton) {
         // resign responder
         passTextField.resignFirstResponder()
         userNameTextField.resignFirstResponder()
@@ -69,12 +71,17 @@ class LoginViewController: UIViewController {
         
         
         // calling API
-        APIManager.sharedInstance().login(userNameTextField.text!, password: passTextField.text!) { (response) in
+        
+        login(userNameTextField.text!, pass: passTextField.text!)
+        
+    }
+    
+    func login(user: String, pass: String){
+        APIManager.sharedInstance().login(user, password: pass) { (response) in
             self.responseHandling(response)
             
         }
 
-        
     }
     
     
@@ -88,9 +95,6 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func registerBtn(sender: UIButton) {
-        // saving user, pass to NSUSERDefaults
-        defaults.setObject(userNameTextField.text!, forKey: APIManager.Constants.userNameDefault)
-        defaults.setObject(passTextField.text!, forKey: APIManager.Constants.userPassDefault)
         
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
