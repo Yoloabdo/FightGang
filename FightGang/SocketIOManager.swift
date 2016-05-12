@@ -11,7 +11,7 @@ import SocketIOClientSwift
 
 class SocketIOManager: NSObject {
     
-    var socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "https://fightgang.herokuapp.com")!)
+    let socket: SocketIOClient = SocketIOClient(socketURL: NSURL(string: "https://fightgang.herokuapp.com")!)
     
     override init() {
         super.init()
@@ -20,7 +20,11 @@ class SocketIOManager: NSObject {
     
     func establishConnection() {
         socket.connect()
-        print("connected")
+        
+        socket.onAny { (event) in
+            print("This happened:",event)
+            
+        }
     }
     
     
@@ -41,7 +45,13 @@ class SocketIOManager: NSObject {
         }
     }
     
-    
+    // connect with user 
+    func connectToServerWithUsername(username: String, completionHandler: (userList: [[String: AnyObject]]!) -> Void) {
+        socket.emit("connectUser", username)
+        socket.on("userList") { ( dataArray, ack) -> Void in
+                completionHandler(userList: dataArray[0] as! [[String: AnyObject]])
+        }
+    }
     
     
     
