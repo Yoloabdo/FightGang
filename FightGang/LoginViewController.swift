@@ -35,7 +35,7 @@ class LoginViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if NSUserDefaults.standardUserDefaults().valueForKey(APIManager.Constants.userNameDefault) != nil {
-            login()
+            loginBtn()
         }
     }
     
@@ -59,32 +59,24 @@ class LoginViewController: UIViewController {
     }
     
     
-    @IBAction func loginBtn(sender: UIButton) {
+    @IBAction func loginBtn() {
         // resign responder
         passTextField.resignFirstResponder()
         userNameTextField.resignFirstResponder()
         
-        // saving user, pass to NSUSERDefaults
-        defaults.setObject(userNameTextField.text!, forKey: APIManager.Constants.userNameDefault)
-        defaults.setObject(passTextField.text!, forKey: APIManager.Constants.userPassDefault)
-
-        
-       login()
-        
-    }
-    
-    func login() {
-        
+        // activte indicator
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         
         // calling API
-        APIManager.sharedInstance().login { (response) in
+        APIManager.sharedInstance().login(userNameTextField.text!, password: passTextField.text!) { (response) in
             self.responseHandling(response)
             
         }
 
+        
     }
+    
     
     func responseHandling(response: AnyObject) -> Void {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
@@ -93,7 +85,6 @@ class LoginViewController: UIViewController {
             return
         }
         self.performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
-        return
     }
     
     @IBAction func registerBtn(sender: UIButton) {
@@ -104,7 +95,7 @@ class LoginViewController: UIViewController {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         // calling API
-        APIManager.sharedInstance().register(aliasTextField.text!){ (response) in
+        APIManager.sharedInstance().register(userNameTextField.text!, password: passTextField.text!, alias: aliasTextField.text!){ (response) in
             self.responseHandling(response)
         }
         

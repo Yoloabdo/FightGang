@@ -36,18 +36,23 @@ class APIManager: NSObject {
                 print("couldn't get user or password")
                 return nil
             }
-            let loginString = NSString(format: "%@:%@", user, pass)
-            let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
-            return loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            return authrization(user, pass: pass)
         }
     }
+
     
+    
+    func authrization(user: String, pass: String) -> String {
+        let loginString = NSString(format: "%@:%@", user, pass)
+        let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
+        return loginData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+    }
     
     
     
    
    // MARK: -LOGIN function
-    func  login(completion: (response:AnyObject) -> Void) {
+    func  login(user: String, password: String, completion: (response:AnyObject) -> Void) {
         
         let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountLogin)!
         
@@ -56,15 +61,12 @@ class APIManager: NSObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
-        guard let auth = Auth else {
-            return
-        }
         
-        request.setValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
+        request.setValue("Basic \(authrization(user, pass: password))", forHTTPHeaderField: "Authorization")
         
         
         networkRequest(request) { (data, code) in
-            self.loginRequestHandling(data, code: code, completion: { (response) in
+            self.loginRequestHandling(user, pass: password, data: data, code: code, completion: { (response) in
                 completion(response: response)
             })
         }
@@ -72,12 +74,17 @@ class APIManager: NSObject {
         
     }
     
-    func  loginRequestHandling(data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
+    func  loginRequestHandling(user: String, pass: String, data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
         do{
             let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
             if code == 200 {
                 print("succeful login/ register")
-                completion(response: User(dictionary: json)!)
+                let loginUser = User(dictionary: json)!
+                defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
+                self.defaults.setObject(pass, forKey: APIManager.Constants.userPassDefault)
+
+                completion(response: loginUser)
                 return
             }else {
                 print("Error login/ register")
@@ -92,22 +99,19 @@ class APIManager: NSObject {
     }
 
     // MARK: -Register function
-    func register(alias: String, completion: (response:AnyObject) -> Void) {
-        guard let user = username, let pass = passWord else {
-            print("couldn't get user or password")
-            return
-        }
+    func register(user: String, password: String, alias: String, completion: (response:AnyObject) -> Void) {
+        
         let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountRegister)
         
         let request = NSMutableURLRequest(URL: url!)
         request.HTTPMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
-        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(pass)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
+        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(password)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
         
         
         networkRequest(request) { (data, code) in
-            self.loginRequestHandling(data, code: code, completion: { (response) in
+            self.loginRequestHandling(user, pass: password, data: data, code: code, completion: { (response) in
                 completion(response: response)
                 
             })

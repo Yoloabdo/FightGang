@@ -16,6 +16,7 @@ extension APIManager {
         
         static let userNameDefault = "user"
         static let userPassDefault = "password"
+        static let userIdDefault = "id"
     }
     
     
