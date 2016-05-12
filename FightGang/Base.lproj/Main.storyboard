@@ -209,7 +209,7 @@
                                     <constraint firstItem="Zhr-dH-p3j" firstAttribute="leading" secondItem="a02-nI-SJX" secondAttribute="leading" id="Hoa-Za-Kak"/>
                                     <constraint firstAttribute="trailing" secondItem="FPc-hM-7vM" secondAttribute="trailing" id="I8d-i9-esR"/>
                                     <constraint firstAttribute="trailing" secondItem="uLw-TK-kce" secondAttribute="trailing" id="ZE1-gc-Hpk"/>
-                                    <constraint firstItem="E7C-EI-yY4" firstAttribute="height" secondItem="uLw-TK-kce" secondAttribute="height" id="ZWc-iN-tsu"/>
+                                    <constraint firstItem="E7C-EI-yY4" firstAttribute="height" relation="lessThanOrEqual" secondItem="uLw-TK-kce" secondAttribute="height" id="ZWc-iN-tsu"/>
                                     <constraint firstItem="jTm-nJ-bbm" firstAttribute="leading" secondItem="a02-nI-SJX" secondAttribute="leading" id="cVs-fl-abt"/>
                                     <constraint firstItem="FPc-hM-7vM" firstAttribute="leading" secondItem="a02-nI-SJX" secondAttribute="leading" id="fow-fO-iKN"/>
                                     <constraint firstAttribute="trailing" secondItem="Zhr-dH-p3j" secondAttribute="trailing" id="vxY-4b-skl"/>
@@ -234,7 +234,7 @@
                         <outlet property="passTextField" destination="GwT-8y-YTn" id="LtJ-qf-XWx"/>
                         <outlet property="registerButton" destination="RSn-F5-uW2" id="Ny9-r1-xYT"/>
                         <outlet property="userNameTextField" destination="DTd-1x-5Ie" id="ibB-sg-N8U"/>
-                        <segue destination="ung-mr-Ram" kind="show" identifier="login" action="showDetailViewController:sender:" id="1ya-NM-2Xo"/>
+                        <segue destination="ung-mr-Ram" kind="presentation" identifier="login" id="1ya-NM-2Xo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -276,44 +276,51 @@
                                 <rect key="frame" x="20" y="64" width="560" height="45"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pXY-bi-bMw">
-                                        <rect key="frame" x="0.0" y="0.0" width="93" height="45"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="45"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="wij-cE-Y1O"/>
                                         </constraints>
                                     </view>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="yt1-B0-Jf7">
-                                        <rect key="frame" x="93" y="8.5" width="374" height="29"/>
+                                        <rect key="frame" x="80" y="8" width="400" height="29"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="374" id="s5T-6v-l7g"/>
+                                        </constraints>
                                         <segments>
                                             <segment title="Stand by"/>
                                             <segment title="Join!"/>
                                         </segments>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="s5T-6v-l7g"/>
+                                            </mask>
+                                        </variation>
                                     </segmentedControl>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zta-3K-fCG">
-                                        <rect key="frame" x="467" y="0.0" width="93" height="45"/>
+                                        <rect key="frame" x="480" y="0.0" width="80" height="45"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Zta-3K-fCG" firstAttribute="height" secondItem="pXY-bi-bMw" secondAttribute="height" id="22S-Lm-g8u"/>
                                     <constraint firstItem="pXY-bi-bMw" firstAttribute="width" secondItem="Zta-3K-fCG" secondAttribute="width" id="npV-nV-NYd"/>
-                                    <constraint firstItem="yt1-B0-Jf7" firstAttribute="width" secondItem="C6d-ho-M6Z" secondAttribute="width" multiplier="2:3" id="u8U-kI-0l0"/>
                                 </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="C6d-ho-M6Z" firstAttribute="top" secondItem="Out-4c-ZRQ" secondAttribute="bottom" id="NbG-r5-epT"/>
-                            <constraint firstItem="C6d-ho-M6Z" firstAttribute="leading" secondItem="IRl-DN-VNw" secondAttribute="leadingMargin" id="qec-4O-N7Z"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="C6d-ho-M6Z" secondAttribute="trailing" id="qwj-Iq-Q9n"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="C6d-ho-M6Z" secondAttribute="trailing" id="Tv4-Uj-bnT"/>
+                            <constraint firstItem="C6d-ho-M6Z" firstAttribute="leading" secondItem="IRl-DN-VNw" secondAttribute="leadingMargin" id="Vc5-w1-2PW"/>
+                            <constraint firstItem="C6d-ho-M6Z" firstAttribute="top" secondItem="Out-4c-ZRQ" secondAttribute="bottom" id="a5X-Ag-ZBG"/>
+                            <constraint firstItem="yt1-B0-Jf7" firstAttribute="width" secondItem="IRl-DN-VNw" secondAttribute="width" multiplier="2:3" id="hhW-Y4-Wnw"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" badgeValue="Arena" systemItem="favorites" id="iKC-hx-1vj"/>
-                    <navigationItem key="navigationItem" title="Fight Gang" id="lA0-kr-8Uc"/>
+                    <navigationItem key="navigationItem" title="FIGHT GANG" id="apD-uh-BL6"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LKO-lS-ihE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2748" y="-357"/>
+            <point key="canvasLocation" x="3560" y="-357"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="igb-vU-cFG">
@@ -325,7 +332,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="LEn-f8-xVL" kind="relationship" relationship="viewControllers" id="DyH-C5-yVJ"/>
+                        <segue destination="4hP-km-HRU" kind="relationship" relationship="viewControllers" id="DyH-C5-yVJ"/>
                         <segue destination="MfR-5c-eiz" kind="relationship" relationship="viewControllers" id="KrQ-ZQ-02w"/>
                         <segue destination="EKc-YL-pLr" kind="relationship" relationship="viewControllers" id="MYh-CP-aqC"/>
                     </connections>
@@ -370,6 +377,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5YE-ec-44a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="468" y="-293"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="WXi-1y-rQg">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="4hP-km-HRU" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" badgeValue="Arena" systemItem="favorites" id="iKC-hx-1vj"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vBY-ao-I5G">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="LEn-f8-xVL" kind="relationship" relationship="rootViewController" id="9tU-8p-jVz"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dR1-as-O2v" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2748" y="-357"/>
         </scene>
     </scenes>
 </document>
