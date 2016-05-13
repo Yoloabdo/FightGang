@@ -279,21 +279,30 @@ class APIManager: NSObject {
         
         networkRequest(request) { (data, responseCode) in
             
-            do{
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
-                var chatLogs = [ChatLog]()
-                for chat in json {
-                    chatLogs.append(ChatLog(obj: chat))
-                }
-                completion(chatArray: chatLogs)
-                
-            }catch {
-                completion(chatArray: "Error serializing JSON for login user")
-            }
+            self.chatResponseHandler(data, code: responseCode, completion: { (chatArray) in
+                completion(chatArray: chatArray)
+            })
         }
     }
     
-    
+    func chatResponseHandler(JsonData: NSData, code: Int, completion:(chatArray: AnyObject) -> Void) -> Void {
+        if code != 200 {
+            completion(chatArray: "Network error \(code)")
+            return
+        }
+        do{
+            let json = try NSJSONSerialization.JSONObjectWithData(JsonData, options: .AllowFragments) as! [JsonObject]
+            var chatLogs = [ChatLog]()
+            for chat in json {
+                chatLogs.append(ChatLog(obj: chat))
+            }
+            completion(chatArray: chatLogs)
+            
+        }catch {
+            completion(chatArray: "Error serializing JSON for login user")
+        }
+
+    }
     
     
 
@@ -325,6 +334,7 @@ class APIManager: NSObject {
         
     }
 
+    
 
     
     
