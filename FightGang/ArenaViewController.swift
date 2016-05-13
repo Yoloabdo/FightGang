@@ -33,13 +33,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         
         // listen to socket attacks
-        SocketIOManager.sharedInstance().arenaOnAttack { (results) in
-            print("Socket attack")
-            APIManager.sharedInstance().arenaAttackJsonHandler(results as! JsonObject, completion: { (jsonParsing) in
-                self.showErrorAlert("", msg: results as! String)
-            })
-            
-        }
+       
 
        
     }

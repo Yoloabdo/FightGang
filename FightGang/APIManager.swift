@@ -167,46 +167,40 @@ class APIManager: NSObject {
     // there's unknown error with this, it's always "message": "The other player has stepped out!",
     //    "status": 403, even if the player is there and all checked via soket too. 
     // handling wasn't finished well accordingly.
+    func attackPLayer(id: Int) -> Void {
+        attackPlayer(id) { (response) in
+            NSNotificationCenter.defaultCenter().postNotificationName(APIManager.Notifications.AttackNotification, object: response)
+        }
+    }
+    
     func attackPlayer(id: Int, completion: (response:AnyObject) -> Void){
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)/attack/:\(id)")!
-        let request = NSMutableURLRequest(URL: url)
-        request.HTTPMethod = "POST"
         
-        request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
-        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
-        
-        networkRequest(request) { (data, responseCode) in
-            
+        taskForPOSTMethod(url, HTTPBody: nil) { (result, error) in
+            if error != nil{
+                completion(response: "\(error!.localizedDescription)")
+                return
+            }
+            guard let jsObj = result as? NSData else {
+                completion(response: "Results error")
+                return
+            }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-                if responseCode == 200 {
-                    self.arenaAttackJsonHandler(json, completion: { (jsonParsing) in
-                        completion(response: jsonParsing)
-                    })
-                }else{
-                    let errorMessage = "\(json["message"] as! String)"
-                    completion(response: errorMessage)
-                    NSNotificationCenter.defaultCenter().postNotificationName(APIManager.Notifications.AttackNotification, object: errorMessage)
+                let json = try NSJSONSerialization.JSONObjectWithData(jsObj, options: .AllowFragments) as! JsonObject
+                guard let op = json["defender"] as? User, alias = op.alias else {
+                    completion(response: "Error \(json["message"])")
+                    return
                 }
+                completion(response: "You attacked \(alias) \(json["damage"])")
             } catch{
-                print(responseCode)
                 completion(response: "Error serializing JSON for the attack")
                 
             }
-
         }
-
     }
     
+ 
     
-    func arenaAttackJsonHandler(json: JsonObject, completion: (jsonParsing:AnyObject) -> Void) -> Void {
-        guard let op = json["defender"] as? User, alias = op.alias else {
-            print("Error loading oponnent alias")
-            return
-        }
-        completion(jsonParsing: "You attacked \(alias) \(json["damage"])")
-       
-    }
     
     func arenRequest(HttpMethod: String, completion: (response:AnyObject) -> Void) -> Void {
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)")!
@@ -336,6 +330,57 @@ class APIManager: NSObject {
 
     
 
+    func taskForPOSTMethod(url: NSURL, HTTPBody: String?, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> Void {
+        
+        /* 1. Set the parameters */
+        
+        /* 2/3. Build the URL, Configure the request */
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        if let body = HTTPBody {
+            request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding)
+        }
+  
+        request.addValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+
+        let session = NSURLSession.sharedSession()
+
+        /* 4. Make the request */
+        let task = session.dataTaskWithRequest(request) { (data, response, error) in
+            
+            func sendError(error: String) {
+                print(error)
+                let userInfo = [NSLocalizedDescriptionKey : error]
+                completionHandlerForPOST(result: nil, error: NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+            }
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                sendError("There was an error with your request: \(error)")
+                return
+            }
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
+                sendError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                sendError("No data was returned by the request!")
+                return
+            }
+            completionHandlerForPOST(result: data, error: nil)
+        
+        }
+        
+        /* 7. Start the request */
+        task.resume()
+        
+    }
     
     
     

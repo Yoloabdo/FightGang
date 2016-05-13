@@ -44,11 +44,7 @@ class FightTableViewCell: UITableViewCell {
     }
     @IBAction func attackUser(sender: UIButton) {
         if canAttack {
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-            APIManager.sharedInstance().attackPlayer(cellUser.id!) {_ in 
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-
-            }
+            APIManager.sharedInstance().attackPLayer(cellUser.id!)
         }
         
     }
