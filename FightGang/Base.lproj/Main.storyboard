@@ -310,7 +310,7 @@
                                     <constraint firstItem="pXY-bi-bMw" firstAttribute="width" secondItem="Zta-3K-fCG" secondAttribute="width" id="npV-nV-NYd"/>
                                 </constraints>
                             </stackView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="75" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oDT-eq-L2m">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="75" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="oDT-eq-L2m">
                                 <rect key="frame" x="20" y="109" width="560" height="442"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -381,6 +381,9 @@
                                                                     <integer key="value" value="5"/>
                                                                 </userDefinedRuntimeAttribute>
                                                             </userDefinedRuntimeAttributes>
+                                                            <connections>
+                                                                <action selector="attackUser:" destination="P9k-KD-rsB" eventType="touchUpInside" id="mgp-Hp-WmE"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                 </stackView>
@@ -393,6 +396,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="attackBtn" destination="g9M-9n-OB2" id="u6E-ey-SdQ"/>
                                             <outlet property="playerLevelLabel" destination="wMA-XS-f39" id="3Df-Du-v0S"/>
                                             <outlet property="playerNameLabel" destination="P7h-Ob-zFc" id="DeB-bM-3QU"/>
                                             <outlet property="playerStaminaLabel" destination="2hY-fF-vD8" id="O22-U8-Jcw"/>

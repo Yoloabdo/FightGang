@@ -26,31 +26,60 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         super.viewDidLoad()
 
         // listen to notification .
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(getActivePlayers), name: SocketIOManager.Constants.notficationName, object: nil)
         
 //         load data 
-        APIManager.sharedInstance().getActivePlayers { (response) in
-            let players = response as! [User]
-            self.dataArray = players
-            self.tableView.reloadData()
-        }
+        getActivePlayers()
         
+       
     }
+    
+    deinit {
+//        NSNotificationCenter.defaultCenter().removeObserver(self, name: SocketIOManager.Constants.notficationName, object: nil)
+    }
+    
+    
+    
+    
     @IBAction func joinArena(sender: UISegmentedControl) {
         
         if sender.selectedSegmentIndex == 0 {
+            canAttack = false
+            APIManager.sharedInstance().leavingArena({ (response) in
+                print("Left arena")
+                self.arenaRespnseHandler(response)
+            })
             
         }else {
             canAttack = true
-            joinArea()
+            joinArenaPlayers()
         }
         
     }
     
-    func joinArea() -> Void {
+    func joinArenaPlayers() -> Void {
         
-        
+        APIManager.sharedInstance().enteringArena { (response) in
+            print("entered arena")
+            self.arenaRespnseHandler(response)
+            
+        }
     }
 
+    func arenaRespnseHandler(data: AnyObject) -> Void {
+        let players = data as! [User]
+        self.dataArray = players
+        self.tableView.reloadData()
+
+    }
+    
+    func getActivePlayers() -> Void {
+        print("Reloaded")
+        APIManager.sharedInstance().getActivePlayers { (response) in
+            self.arenaRespnseHandler(response)
+        }
+
+    }
     
     
     
@@ -64,7 +93,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         let cell = tableView.dequeueReusableCellWithIdentifier(StoryBoard.CellId, forIndexPath: indexPath) as! FightTableViewCell
         
         cell.cellUser = dataArray[indexPath.row]
-        
+        cell.canAttack = canAttack
         return cell
     }
 

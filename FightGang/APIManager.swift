@@ -106,10 +106,10 @@ class APIManager: NSObject {
     func  loginRequestHandling(user: String, pass: String, data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
         do{
             let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-            if code == 200 {
+            if code == 200 || code == 201{
                 print("succeful login/ register")
                 let loginUser = User(dictionary: json)!
-                defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
                 self.defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
                 self.defaults.setObject(pass, forKey: APIManager.Constants.userPassDefault)
                 
@@ -131,11 +131,20 @@ class APIManager: NSObject {
     
     func getActivePlayers(completion: (response:AnyObject) -> Void) {
     
+        // start live update from socket
+        SocketIOManager.sharedInstance().arenaCheck { (results) in
+            self.playersResponseHandler(results as! [JsonObject], completion: { (players) in
+                completion(response: players)
+            })
+        }
+        
+        // normal request process
         arenRequest("GET") { (response) in
             completion(response: response)
         }
 
     }
+    
     
     func  enteringArena(completion: (response:AnyObject) -> Void) -> Void {
         arenRequest("POST") { (response) in
@@ -143,11 +152,53 @@ class APIManager: NSObject {
         }
         
     }
+    
+    
+    func  leavingArena(completion: (response:AnyObject) -> Void) -> Void {
+        
+        arenRequest("DELETE") { (response) in
+            completion(response: response)
+        }
+
+    }
+    
+    // there's unknown error with this, it's always "message": "The other player has stepped out!",
+    //    "status": 403, even if the player is there and all checked via soket too. 
+    // handling wasn't finished well accordingly.
+    func attackPlayer(id: Int, completion: (response:AnyObject) -> Void){
+        let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)/attack/:\(id)")!
+        print(url.absoluteString)
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        
+        networkRequest(request) { (data, responseCode) in
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
+                print(json)
+                if responseCode == 200 {
+                    completion(response: json)
+                }else{
+                    completion(response: "Error Attacking Player \(json["message"] as! String)")
+                }
+            } catch{
+                print(responseCode)
+                completion(response: "Error serializing JSON for the attack")
+                
+            }
+
+        }
+
+    }
+    
+    
     func arenRequest(HttpMethod: String, completion: (response:AnyObject) -> Void) -> Void {
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)")!
         let request = NSMutableURLRequest(URL: url)
-        if HttpMethod == "POST" {
-            request.HTTPMethod = "POST"
+        if HttpMethod != "GET" {
+            request.HTTPMethod = HttpMethod
         }
         request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
@@ -158,11 +209,9 @@ class APIManager: NSObject {
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
                 if code == 200 {
-                    var players = [User]()
-                    for player in json {
-                        players.append(User(dictionary: player)!)
-                    }
-                    completion(response: players)
+                    self.playersResponseHandler(json, completion: { (players) in
+                        completion(response: players)
+                    })
                 }else{
                     completion(response: "Error loading Active Players")
                 }
@@ -174,9 +223,17 @@ class APIManager: NSObject {
             
         }
     }
+    
+    func playersResponseHandler(json: [JsonObject] ,completion: (players:AnyObject) -> Void){
+        var players = [User]()
+        for player in json {
+            players.append(User(dictionary: player)!)
+        }
+        completion(players: players)
+    }
 
 
-    // MARK: -NetWork request 
+    // MARK: -NetWork request
     private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
     {
         

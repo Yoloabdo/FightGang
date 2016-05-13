@@ -34,11 +34,11 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        guard let user = defaults.stringForKey(APIManager.Constants.userNameDefault), pass = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
+        guard let _ = defaults.stringForKey(APIManager.Constants.userNameDefault), _ = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
             print("No previous login")
             return
         }
-        login(user, pass: pass)
+        performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
     }
     
     

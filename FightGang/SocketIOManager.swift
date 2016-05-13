@@ -23,6 +23,7 @@ class SocketIOManager: NSObject {
     
     func establishConnection() {
         socket.connect()
+        print("connected")
         
         socket.onAny { (event) in
             NSNotificationCenter.defaultCenter().postNotificationName(SocketIOManager.Constants.notficationName, object: nil)
@@ -36,24 +37,33 @@ class SocketIOManager: NSObject {
     }
     
     
-    
-    
-    
-    // connect with id 
-    func connectToServerWithID(id: String, completionHandler: (userList: [[String: AnyObject]]!) -> Void) {
-        socket.emit("connectUser", id)
+    func arenaCheck(completionHandler: AnyObject -> Void) {
+        socket.on("arena") { (dataArray, emit) in
+            completionHandler(dataArray[0] as! [[String: AnyObject]])
+        }
         
-        socket.on("userList") { ( dataArray, ack) -> Void in
-            completionHandler(userList: dataArray[0] as! [[String: AnyObject]])
+        socket.on("attack") { (dataArray, emit) in
+            completionHandler(dataArray[0] as! [[String: AnyObject]])
+        }
+        
+    }
+
+    func playersHeal(completionHandler: AnyObject -> Void) {
+        socket.on("heal") { (dataArray, emit) in
+            completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
     }
-    
-    // connect with user 
-    func connectToServerWithUsername(username: String, completionHandler: (userList: [[String: AnyObject]]!) -> Void) {
-        socket.emit("connectUser", username)
-        socket.on("userList") { ( dataArray, ack) -> Void in
-                completionHandler(userList: dataArray[0] as! [[String: AnyObject]])
+
+    func chatUpdates(completionHandler: AnyObject -> Void) {
+        socket.on("chat") { (dataArray, emit) in
+            completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
+    }
+    func off() -> Void {
+        socket.off("arena")
+        socket.off("attack")
+        socket.off("heal")
+        socket.off("chat")
     }
     
     
