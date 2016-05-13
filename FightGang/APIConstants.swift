@@ -25,6 +25,9 @@ extension APIManager {
         static let AccountLogin = "/players/me/"
         static let AccountRegister = "/players"
         
+        // Chat
+        static let Chat = "/chat"
+        
         
         // Arena 
         static let Arena = "/arena"

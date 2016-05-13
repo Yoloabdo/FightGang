@@ -332,6 +332,7 @@
                     <navigationItem key="navigationItem" title="FIGHT GANG" id="OJK-P8-74S"/>
                     <connections>
                         <outlet property="chatTextField" destination="2sg-t5-pxx" id="sed-bg-4wn"/>
+                        <outlet property="tableView" destination="mxc-wW-WCm" id="HZ1-fG-8xg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eUU-Q7-iV4" userLabel="First Responder" sceneMemberID="firstResponder"/>

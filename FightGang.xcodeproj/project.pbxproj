@@ -21,6 +21,7 @@
 		B4FF98921CE5DCE900C74543 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98911CE5DCE900C74543 /* ProfileViewController.swift */; };
 		B4FF98941CE6088900C74543 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98931CE6088900C74543 /* ChatViewController.swift */; };
 		B4FF98961CE608A100C74543 /* ChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98951CE608A100C74543 /* ChatTableViewCell.swift */; };
+		B4FF98981CE624E200C74543 /* ChatLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98971CE624E200C74543 /* ChatLog.swift */; };
 		CA417F45FC65F4FB4C47099C /* Pods_FightGang.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0067A06D74E348924491A /* Pods_FightGang.framework */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +46,7 @@
 		B4FF98911CE5DCE900C74543 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		B4FF98931CE6088900C74543 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B4FF98951CE608A100C74543 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
+		B4FF98971CE624E200C74543 /* ChatLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				B47F3B751CE4090100303B14 /* SocketIOManager.swift */,
 				B47F3B771CE46B3200303B14 /* APIConstants.swift */,
 				B49A991E1CE3C471009B0BF7 /* User.swift */,
+				B4FF98971CE624E200C74543 /* ChatLog.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 				B421A46D1CE3938000B7C4E8 /* LoginViewController.swift in Sources */,
 				B421A46B1CE3938000B7C4E8 /* AppDelegate.swift in Sources */,
 				B4FF98961CE608A100C74543 /* ChatTableViewCell.swift in Sources */,
+				B4FF98981CE624E200C74543 /* ChatLog.swift in Sources */,
 				B47F3B781CE46B3200303B14 /* APIConstants.swift in Sources */,
 				B4FF98921CE5DCE900C74543 /* ProfileViewController.swift in Sources */,
 				B47F3B761CE4090100303B14 /* SocketIOManager.swift in Sources */,

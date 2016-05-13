@@ -10,10 +10,20 @@ import UIKit
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        APIManager.sharedInstance().getChatLogs { logs in
+            guard let chatlogs = logs as? [ChatLog] else {
+                self.showErrorAlert("Error Loading", msg: logs as! String)
+                return
+            }
+            self.chatData = chatlogs
+            self.tableView.reloadData()
+            
+        }
     }
     @IBOutlet weak var chatTextField: UITextField!
 
@@ -26,7 +36,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
-    var chatData = [String]()
+    var chatData = [ChatLog]()
     
     struct StoryBoard {
         static let CellId = "ChatCell"
@@ -41,18 +51,20 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(StoryBoard.CellId, forIndexPath: indexPath)
-        
+        let log = chatData[indexPath.row]
+        cell.textLabel?.text = log.message
+        cell.detailTextLabel?.text = log.sender
         return cell
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    
+    func showErrorAlert(title: String, msg: String) -> Void {
+        let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
+        alert.addAction(action)
+        
+        presentViewController(alert, animated: true, completion: nil)
     }
-    */
-
+    
 }

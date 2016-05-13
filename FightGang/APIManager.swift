@@ -13,6 +13,8 @@ typealias JsonObject = Dictionary<String, AnyObject>
 
 
 class APIManager: NSObject {
+    
+    // MARK: -Helper vars
    
     let defaults = NSUserDefaults.standardUserDefaults()
 
@@ -265,6 +267,35 @@ class APIManager: NSObject {
 
         }
     }
+    
+    
+    // MARK: -Chat networking
+    
+    func getChatLogs(completion:(chatArray: AnyObject) -> Void) -> Void {
+        let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Chat)")!
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        
+        networkRequest(request) { (data, responseCode) in
+            
+            do{
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
+                var chatLogs = [ChatLog]()
+                for chat in json {
+                    chatLogs.append(ChatLog(obj: chat))
+                }
+                completion(chatArray: chatLogs)
+                
+            }catch {
+                completion(chatArray: "Error serializing JSON for login user")
+            }
+        }
+    }
+    
+    
+    
+    
 
     // MARK: -NetWork request
     private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
