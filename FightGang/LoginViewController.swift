@@ -34,11 +34,13 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        guard let _ = defaults.stringForKey(APIManager.Constants.userNameDefault), _ = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
-            print("No previous login")
-            return
-        }
-        performSegueWithIdentifier(StoryBoard.SegueId, sender: nil)
+        
+//        checking if the user has old credintials.
+//        guard let user = defaults.stringForKey(APIManager.Constants.userNameDefault), pass = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
+//            print("No previous login")
+//            return
+//        }
+//        login(user, pass: pass)
     }
     
     
@@ -75,8 +77,10 @@ class LoginViewController: UIViewController {
         
         // calling API
         APIManager.sharedInstance().login(user, password: pass) { (response) in
-            self.responseHandling(response)
-            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.responseHandling(response)
+
+            }
         }
 
     }
@@ -95,7 +99,9 @@ class LoginViewController: UIViewController {
         
         // calling API
         APIManager.sharedInstance().register(userNameTextField.text!, password: passTextField.text!, alias: aliasTextField.text!){ (response) in
-            self.responseHandling(response)
+            dispatch_async(dispatch_get_main_queue()) {
+                self.responseHandling(response)
+            }
         }
         
     }

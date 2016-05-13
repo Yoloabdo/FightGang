@@ -27,7 +27,9 @@ class ProfileViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         APIManager.sharedInstance().getMainProfile { (playerProfile) in
-            self.userProfile = playerProfile as! User
+            dispatch_async(dispatch_get_main_queue()) {
+                self.userProfile = playerProfile as! User
+            }
         }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(updateUI), name: SocketIOManager.Constants.AnyNotfication, object: nil)

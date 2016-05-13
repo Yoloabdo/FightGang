@@ -32,15 +32,33 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         getActivePlayers()
         
         
-        // listen to socket attacks
+        // listen to socket
+        // start live update from socket
+        SocketIOManager.sharedInstance().arenaCheck { (results) in
+            
+            guard let results = results as? [JsonObject] else {
+                print("Socket players error")
+                return
+            }
+            var players = [User]()
+            for res in results {
+                players.append(User(dictionary: res)!)
+            }
+            
+            self.arenaRespnseHandler(players)
+            
+            
+        }
        
 
        
     }
     
     func postAlert(not: NSNotification) -> Void {
-        let error = not.object as! String
-        showErrorAlert("Error", msg: error)
+        dispatch_async(dispatch_get_main_queue()) {
+            let error = not.object as! String
+            self.showErrorAlert("Error", msg: error)
+        }
     }
     
     deinit {
@@ -54,17 +72,21 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         if sender.selectedSegmentIndex == 0 {
             canAttack = false
-            // indicator 
 
             // off socket
             SocketIOManager.sharedInstance().arenaoffAttack()
             
             // calling API
-            APIManager.sharedInstance().leavingArena({ (response) in
-                print("Left arena")
-                self.arenaRespnseHandler(response)
+            APIManager.sharedInstance().leavingArena({ (players, error) in
+                dispatch_async(dispatch_get_main_queue()) {
+                    if error == nil {
+                        self.arenaRespnseHandler(players)
+                    }else {
+                        self.showErrorAlert("Error", msg: error!)
+                    }
+
+                }
             })
-            
         }else {
             canAttack = true
             joinArenaPlayers()
@@ -76,15 +98,18 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func joinArenaPlayers() -> Void {
         
 
-        APIManager.sharedInstance().enteringArena { (response) in
-            print("entered arena")
-            self.arenaRespnseHandler(response)
-            
+        APIManager.sharedInstance().enteringArena { (players, error) in
+            dispatch_async(dispatch_get_main_queue()) {
+                if error == nil {
+                    self.arenaRespnseHandler(players)
+                }else {
+                    self.showErrorAlert("Error", msg: error!)
+                }
+            }
         }
     }
 
-    func arenaRespnseHandler(data: AnyObject) -> Void {
-        let players = data as! [User]
+    func arenaRespnseHandler(players: [User]) -> Void {
         self.dataArray = players
         self.tableView.reloadData()
 
@@ -93,7 +118,9 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     func getActivePlayers() -> Void {
         print("Reloaded")
         APIManager.sharedInstance().getActivePlayers { (response) in
-            self.arenaRespnseHandler(response)
+            dispatch_async(dispatch_get_main_queue()) {
+                self.arenaRespnseHandler(response as! [User])
+            }
         }
     }
     

@@ -132,14 +132,6 @@ class APIManager: NSObject {
     // MARK: -Arena networking
     
     func getActivePlayers(completion: (response:AnyObject) -> Void) {
-    
-        // start live update from socket
-        SocketIOManager.sharedInstance().arenaCheck { (results) in
-            self.playersResponseHandler(results as! [JsonObject], completion: { (players) in
-                completion(response: players)
-            })
-        }
-        
         // normal request process
         arenRequest("GET") { (response) in
             completion(response: response)
@@ -148,21 +140,51 @@ class APIManager: NSObject {
     }
     
     
-    func  enteringArena(completion: (response:AnyObject) -> Void) -> Void {
-        arenRequest("POST") { (response) in
-            completion(response: response)
+    func  enteringArena(completion: (players:[User]!, error: String?) -> Void) -> Void {
+        arenaEntrance("POST") { (players, error) in
+            completion(players: players, error: error)
         }
-        
     }
     
     
-    func  leavingArena(completion: (response:AnyObject) -> Void) -> Void {
+    func  leavingArena(completion: (players:[User]!, error: String?) -> Void) -> Void {
+        arenaEntrance("DELETE") { (players, error) in
+            completion(players: players, error: error)
+        }
+    }
+    
+    private func arenaEntrance(method: String, completion: (players:[User]!, error: String?) -> Void) {
         
-        arenRequest("DELETE") { (response) in
-            completion(response: response)
+        taskWithMethod("\(APIManager.Methods.Arena)", method: method, HTTPBody: nil) { (result, error) in
+            self.arenaRequestHandler(result, error: error, completion: { (players, errorplayers) in
+                completion(players: players, error: errorplayers)
+            })
         }
 
     }
+    
+    func arenaRequestHandler(result: AnyObject, error: NSError?, completion: (players:[User]!, error: String?) -> Void) -> Void {
+        if error != nil{
+            completion(players: nil, error: "\(error!.localizedDescription)")
+            return
+        }
+        guard let jsObj = result as? NSData else {
+            completion(players: nil, error: "Results error")
+            return
+        }
+        do {
+            let json = try NSJSONSerialization.JSONObjectWithData(jsObj, options: .AllowFragments) as! [JsonObject]
+            self.playersResponseHandler(json, completion: { (players) in
+                completion(players: players, error: nil)
+            })
+            
+        } catch{
+            completion(players: nil, error: "Error serializing JSON for Active Players")
+            
+        }
+
+    }
+    
     
     // there's unknown error with this, it's always "message": "The other player has stepped out!",
     //    "status": 403, even if the player is there and all checked via soket too. 
@@ -173,10 +195,9 @@ class APIManager: NSObject {
         }
     }
     
-    func attackPlayer(id: Int, completion: (response:AnyObject) -> Void){
-        let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)/attack/:\(id)")!
+    func attackPlayer(id: Int, completion: (response: String) -> Void){
         
-        taskForPOSTMethod(url, HTTPBody: nil) { (result, error) in
+        taskWithMethod("arena/attack/:id", method: "POST", HTTPBody: nil) { (result, error) in
             if error != nil{
                 completion(response: "\(error!.localizedDescription)")
                 return
@@ -232,7 +253,7 @@ class APIManager: NSObject {
         }
     }
     
-    func playersResponseHandler(json: [JsonObject] ,completion: (players:AnyObject) -> Void){
+    func playersResponseHandler(json: [JsonObject] ,completion: (players:[User]) -> Void){
         var players = [User]()
         for player in json {
             players.append(User(dictionary: player)!)
@@ -299,6 +320,14 @@ class APIManager: NSObject {
     }
     
     
+    func chatSendMessage(message: String) -> Void {
+        let body = "{\n  \"message\": \"\(message)\"\n}"
+        taskWithMethod("\(APIManager.Methods.Chat)", method: "POST", HTTPBody: body) { (result, error) in
+            
+            print(result)
+        }
+    }
+    
 
     // MARK: -NetWork request
     private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
@@ -330,13 +359,14 @@ class APIManager: NSObject {
 
     
 
-    func taskForPOSTMethod(url: NSURL, HTTPBody: String?, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> Void {
+    func taskWithMethod(apiURL: String, method: String, HTTPBody: String?, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> Void {
         
-        /* 1. Set the parameters */
+        /* 1. Set the URL */
+        let url = NSURL(string: APIManager.Constants.BaseURL+apiURL)!
         
         /* 2/3. Build the URL, Configure the request */
         let request = NSMutableURLRequest(URL: url)
-        request.HTTPMethod = "POST"
+        request.HTTPMethod = method
         
         if let body = HTTPBody {
             request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding)
@@ -348,10 +378,12 @@ class APIManager: NSObject {
         let session = NSURLSession.sharedSession()
 
         /* 4. Make the request */
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
-            
+            // layOFFIndicator
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+
             func sendError(error: String) {
-                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForPOST(result: nil, error: NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
@@ -374,7 +406,8 @@ class APIManager: NSObject {
                 return
             }
             completionHandlerForPOST(result: data, error: nil)
-        
+            
+            
         }
         
         /* 7. Start the request */

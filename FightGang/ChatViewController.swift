@@ -16,12 +16,15 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
         // Do any additional setup after loading the view.
         APIManager.sharedInstance().getChatLogs { logs in
-            guard let chatlogs = logs as? [ChatLog] else {
-                self.showErrorAlert("Error Loading", msg: logs as! String)
-                return
+            dispatch_async(dispatch_get_main_queue()) {
+                guard let chatlogs = logs as? [ChatLog] else {
+                    self.showErrorAlert("Error Loading", msg: logs as! String)
+                    return
+                }
+                self.chatData = chatlogs
+                self.tableView.reloadData()
             }
-            self.chatData = chatlogs
-            self.tableView.reloadData()
+            
             
         }
     }
@@ -32,8 +35,10 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         // Dispose of any resources that can be recreated.
     }
     
+    @IBOutlet weak var messageTextField: UITextField!
+    
     @IBAction func sendMessage(sender: UIButton) {
-        
+        APIManager.sharedInstance().chatSendMessage(messageTextField.text!)
     }
     
     var chatData = [ChatLog]()
