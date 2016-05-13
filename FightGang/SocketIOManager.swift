@@ -18,7 +18,8 @@ class SocketIOManager: NSObject {
     }
     
     struct Constants {
-        static let notficationName = "checkSocket"
+        static let AnyNotfication = "checkSocket"
+        static let AttackNotification = "AttackSocket"
     }
     
     func establishConnection() {
@@ -26,7 +27,7 @@ class SocketIOManager: NSObject {
         print("connected")
         
         socket.onAny { (event) in
-            NSNotificationCenter.defaultCenter().postNotificationName(SocketIOManager.Constants.notficationName, object: nil)
+            NSNotificationCenter.defaultCenter().postNotificationName(SocketIOManager.Constants.AnyNotfication, object: nil)
             
         }
     }

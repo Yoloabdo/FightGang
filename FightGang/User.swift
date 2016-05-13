@@ -22,6 +22,8 @@ class User: NSObject {
     
     var maxStamina: Int?
     
+    var experience: Int?
+    
     
     
         
@@ -53,6 +55,10 @@ class User: NSObject {
         guard let maxStamina = dictionary["maxStamina"] as? Int else {
             print("Couldn't interpret maxStamina")
             return
+        }
+        
+        if let exp = dictionary["expNext"] as? Int {
+            self.experience = exp
         }
         
         

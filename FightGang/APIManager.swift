@@ -167,7 +167,6 @@ class APIManager: NSObject {
     // handling wasn't finished well accordingly.
     func attackPlayer(id: Int, completion: (response:AnyObject) -> Void){
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)/attack/:\(id)")!
-        print(url.absoluteString)
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
@@ -178,13 +177,14 @@ class APIManager: NSObject {
             
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-                print(json)
                 if responseCode == 200 {
                     self.arenaAttackJsonHandler(json, completion: { (jsonParsing) in
                         completion(response: jsonParsing)
                     })
                 }else{
-                    completion(response: "Error Attacking Player \(json["message"] as! String)")
+                    let errorMessage = "\(json["message"] as! String)"
+                    completion(response: errorMessage)
+                    NSNotificationCenter.defaultCenter().postNotificationName(APIManager.Notifications.AttackNotification, object: errorMessage)
                 }
             } catch{
                 print(responseCode)
@@ -244,16 +244,42 @@ class APIManager: NSObject {
         completion(players: players)
     }
 
+    
+    
+    // MARK: -Me profile 
+    
+    func getMainProfile(completion: (playerProfile:AnyObject) -> Void) -> Void {
+        let url = NSURL(string: "\(APIManager.Constants.BaseURL)/players/me")!
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
+        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
+        
+        networkRequest(request) { (data, responseCode) in
+            do{
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
+                    completion(playerProfile: User(dictionary: json)!)
+                
+            }catch {
+                completion(playerProfile: "Error serializing JSON for login user")
+            }
+
+        }
+    }
 
     // MARK: -NetWork request
     private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
     {
+        // loading network indicator
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { data, response, error in
             if let response = response as? NSHTTPURLResponse, data = data {
                 // check login status via response code
                 dispatch_async(dispatch_get_main_queue()) {
+                    // lay off indicator
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                    // return results
                     completion(data: data, responseCode: response.statusCode)
                 }
             }

@@ -73,9 +73,6 @@ class LoginViewController: UIViewController {
     
     func login(user: String, pass: String){
         
-        // activte indicator
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-
         // calling API
         APIManager.sharedInstance().login(user, password: pass) { (response) in
             self.responseHandling(response)
@@ -86,7 +83,6 @@ class LoginViewController: UIViewController {
     
     
     func responseHandling(response: AnyObject) -> Void {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         guard response is User else {
             self.showErrorAlert("Erorr", msg: response as! String)
             return
@@ -96,7 +92,6 @@ class LoginViewController: UIViewController {
     
     @IBAction func registerBtn(sender: UIButton) {
         
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
         // calling API
         APIManager.sharedInstance().register(userNameTextField.text!, password: passTextField.text!, alias: aliasTextField.text!){ (response) in

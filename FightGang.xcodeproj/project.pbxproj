@@ -18,6 +18,9 @@
 		B49A991F1CE3C471009B0BF7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49A991E1CE3C471009B0BF7 /* User.swift */; };
 		B49A99211CE3E871009B0BF7 /* ArenaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49A99201CE3E870009B0BF7 /* ArenaViewController.swift */; };
 		B4FF988F1CE5271900C74543 /* FightTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */; };
+		B4FF98921CE5DCE900C74543 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98911CE5DCE900C74543 /* ProfileViewController.swift */; };
+		B4FF98941CE6088900C74543 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98931CE6088900C74543 /* ChatViewController.swift */; };
+		B4FF98961CE608A100C74543 /* ChatTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FF98951CE608A100C74543 /* ChatTableViewCell.swift */; };
 		CA417F45FC65F4FB4C47099C /* Pods_FightGang.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0067A06D74E348924491A /* Pods_FightGang.framework */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +42,9 @@
 		B49A991E1CE3C471009B0BF7 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B49A99201CE3E870009B0BF7 /* ArenaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArenaViewController.swift; sourceTree = "<group>"; };
 		B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FightTableViewCell.swift; sourceTree = "<group>"; };
+		B4FF98911CE5DCE900C74543 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		B4FF98931CE6088900C74543 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		B4FF98951CE608A100C74543 /* ChatTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,8 +133,10 @@
 		B49A99221CE3E876009B0BF7 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B4FF98931CE6088900C74543 /* ChatViewController.swift */,
 				B421A46C1CE3938000B7C4E8 /* LoginViewController.swift */,
 				B49A99201CE3E870009B0BF7 /* ArenaViewController.swift */,
+				B4FF98911CE5DCE900C74543 /* ProfileViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -136,6 +144,7 @@
 		B4FF98901CE539A900C74543 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B4FF98951CE608A100C74543 /* ChatTableViewCell.swift */,
 				B4FF988E1CE5271900C74543 /* FightTableViewCell.swift */,
 			);
 			name = Views;
@@ -268,8 +277,11 @@
 				B49A991F1CE3C471009B0BF7 /* User.swift in Sources */,
 				B421A46D1CE3938000B7C4E8 /* LoginViewController.swift in Sources */,
 				B421A46B1CE3938000B7C4E8 /* AppDelegate.swift in Sources */,
+				B4FF98961CE608A100C74543 /* ChatTableViewCell.swift in Sources */,
 				B47F3B781CE46B3200303B14 /* APIConstants.swift in Sources */,
+				B4FF98921CE5DCE900C74543 /* ProfileViewController.swift in Sources */,
 				B47F3B761CE4090100303B14 /* SocketIOManager.swift in Sources */,
+				B4FF98941CE6088900C74543 /* ChatViewController.swift in Sources */,
 				B421A47D1CE393C100B7C4E8 /* APIManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

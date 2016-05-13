@@ -32,4 +32,8 @@ extension APIManager {
     
     
     
+    struct Notifications {
+        static let AttackNotification = "Attack"
+    }
+    
 }

@@ -25,6 +25,8 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // listen to notification 
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postAlert), name: APIManager.Notifications.AttackNotification, object: nil)
         
 //         load data 
         getActivePlayers()
@@ -42,6 +44,11 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
        
     }
     
+    func postAlert(not: NSNotification) -> Void {
+        let error = not.object as! String
+        showErrorAlert("Error", msg: error)
+    }
+    
     deinit {
         SocketIOManager.sharedInstance().arenaoff()
     }
@@ -53,6 +60,8 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         if sender.selectedSegmentIndex == 0 {
             canAttack = false
+            // indicator 
+
             // off socket
             SocketIOManager.sharedInstance().arenaoffAttack()
             
@@ -65,13 +74,14 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }else {
             canAttack = true
             joinArenaPlayers()
+            
         }
         
     }
     
     func joinArenaPlayers() -> Void {
         
-        
+
         APIManager.sharedInstance().enteringArena { (response) in
             print("entered arena")
             self.arenaRespnseHandler(response)
@@ -91,7 +101,6 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         APIManager.sharedInstance().getActivePlayers { (response) in
             self.arenaRespnseHandler(response)
         }
-
     }
     
     
