@@ -175,11 +175,14 @@ class APIManager: NSObject {
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
         networkRequest(request) { (data, responseCode) in
+            
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
                 print(json)
                 if responseCode == 200 {
-                    completion(response: json)
+                    self.arenaAttackJsonHandler(json, completion: { (jsonParsing) in
+                        completion(response: jsonParsing)
+                    })
                 }else{
                     completion(response: "Error Attacking Player \(json["message"] as! String)")
                 }
@@ -193,6 +196,15 @@ class APIManager: NSObject {
 
     }
     
+    
+    func arenaAttackJsonHandler(json: JsonObject, completion: (jsonParsing:AnyObject) -> Void) -> Void {
+        guard let op = json["defender"] as? User, alias = op.alias else {
+            print("Error loading oponnent alias")
+            return
+        }
+        completion(jsonParsing: "You attacked \(alias) \(json["damage"])")
+       
+    }
     
     func arenRequest(HttpMethod: String, completion: (response:AnyObject) -> Void) -> Void {
         let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Arena)")!

@@ -42,12 +42,23 @@ class SocketIOManager: NSObject {
             completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
         
+    }
+    
+    
+    
+    func arenaOnAttack(completionHandler: AnyObject -> Void){
         socket.on("attack") { (dataArray, emit) in
             completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
-        
     }
 
+    func arenaoffAttack() -> Void {
+
+        socket.off("attack")
+        
+    }
+    
+    
     func playersHeal(completionHandler: AnyObject -> Void) {
         socket.on("heal") { (dataArray, emit) in
             completionHandler(dataArray[0] as! [[String: AnyObject]])
@@ -59,11 +70,10 @@ class SocketIOManager: NSObject {
             completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
     }
-    func off() -> Void {
+    func arenaoff() -> Void {
         socket.off("arena")
         socket.off("attack")
         socket.off("heal")
-        socket.off("chat")
     }
     
     

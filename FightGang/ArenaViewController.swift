@@ -25,17 +25,25 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // listen to notification .
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(getActivePlayers), name: SocketIOManager.Constants.notficationName, object: nil)
         
 //         load data 
         getActivePlayers()
         
+        
+        // listen to socket attacks
+        SocketIOManager.sharedInstance().arenaOnAttack { (results) in
+            print("Socket attack")
+            APIManager.sharedInstance().arenaAttackJsonHandler(results as! JsonObject, completion: { (jsonParsing) in
+                self.showErrorAlert("", msg: results as! String)
+            })
+            
+        }
+
        
     }
     
     deinit {
-//        NSNotificationCenter.defaultCenter().removeObserver(self, name: SocketIOManager.Constants.notficationName, object: nil)
+        SocketIOManager.sharedInstance().arenaoff()
     }
     
     
@@ -45,6 +53,10 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         if sender.selectedSegmentIndex == 0 {
             canAttack = false
+            // off socket
+            SocketIOManager.sharedInstance().arenaoffAttack()
+            
+            // calling API
             APIManager.sharedInstance().leavingArena({ (response) in
                 print("Left arena")
                 self.arenaRespnseHandler(response)
@@ -58,6 +70,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func joinArenaPlayers() -> Void {
+        
         
         APIManager.sharedInstance().enteringArena { (response) in
             print("entered arena")
@@ -107,5 +120,14 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         // Pass the selected object to the new view controller.
     }
     */
+    
+    func showErrorAlert(title: String, msg: String) -> Void {
+        let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
+        let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
+        alert.addAction(action)
+        
+        presentViewController(alert, animated: true, completion: nil)
+    }
+
 
 }
