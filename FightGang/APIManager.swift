@@ -56,33 +56,30 @@ class APIManager: NSObject {
    // MARK: -LOGIN function
     func  login(user: String?, password: String?, completion: (response:AnyObject) -> Void) {
         
-        var user = user, password = password
+        defaults.setObject(user, forKey: APIManager.Constants.userIdDefault)
+        defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         
-        let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountLogin)!
-        
-        let request = NSMutableURLRequest(URL: url)
-        request.HTTPMethod = "GET"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
-        
-        // check nullability, get them from defaults if exists
-        if user == nil {
-            user = userName
-            password = passWord
+
+        taskWithMethod(APIManager.Methods.AccountLogin, method: "GET", HTTPBody: nil) { (result, error) in
+            
+            if error != nil {
+                self.defaults.setObject(nil, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(nil, forKey: APIManager.Constants.userPassDefault)
+                completion(response: "Error on signin, \(error?.localizedDescription)")
+            }else{
+                do{
+                    let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
+                        print("succeful login/ register")
+                        let loginUser = User(dictionary: json)!
+                        self.defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
+                        completion(response: loginUser)
+            
+                }catch {
+                    completion(response: "Error serializing JSON for login user")
+                }
+            }
         }
-        
-        request.setValue("Basic \(authrization(user!, pass: password!))", forHTTPHeaderField: "Authorization")
-        
-        
-        networkRequest(request) { (data, code) in
-            self.loginRequestHandling(user!, pass: password!, data: data, code: code, completion: { (response) in
-                completion(response: response)
-            })
-        }
-        
-        
     }
-   
 
     // MARK: -Register function
     func register(user: String, password: String, alias: String, completion: (response:AnyObject) -> Void) {
@@ -202,12 +199,9 @@ class APIManager: NSObject {
                 completion(response: "\(error!.localizedDescription)")
                 return
             }
-            guard let jsObj = result as? NSData else {
-                completion(response: "Results error")
-                return
-            }
+            
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(jsObj, options: .AllowFragments) as! JsonObject
+                let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
                 guard let op = json["defender"] as? User, alias = op.alias else {
                     completion(response: "Error \(json["message"])")
                     return
@@ -268,7 +262,7 @@ class APIManager: NSObject {
         taskWithMethod("/players/me", method: "GET", HTTPBody: nil) { (result, error) in
             
             do{
-                let json = try NSJSONSerialization.JSONObjectWithData(result as! NSData, options: .AllowFragments) as! JsonObject
+                let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
                 completion(playerProfile: User(dictionary: json)!)
                 
             }catch {
@@ -287,7 +281,7 @@ class APIManager: NSObject {
         taskWithMethod("\(APIManager.Methods.Chat)", method: "GET", HTTPBody: nil) { (result, error) in
             
             if error == nil{
-                self.chatResponseHandler(result as! NSData, completion: { (chatArray, error) in
+                self.chatResponseHandler(result, completion: { (chatArray, error) in
                     completion(chatArray: chatArray, error: error)
                 })
             }
@@ -349,7 +343,7 @@ class APIManager: NSObject {
 
     
 
-    func taskWithMethod(apiURL: String, method: String, HTTPBody: String?, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> Void {
+    func taskWithMethod(apiURL: String, method: String, HTTPBody: String?, completionHandlerForPOST: (result: NSData!, error: NSError?) -> Void) -> Void {
         
         /* 1. Set the URL */
         let url = NSURL(string: APIManager.Constants.BaseURL+apiURL)!
