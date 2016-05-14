@@ -36,11 +36,11 @@ class LoginViewController: UIViewController {
         super.viewWillAppear(animated)
         
 //        checking if the user has old credintials.
-//        guard let user = defaults.stringForKey(APIManager.Constants.userNameDefault), pass = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
-//            print("No previous login")
-//            return
-//        }
-//        login(user, pass: pass)
+        guard let user = defaults.stringForKey(APIManager.Constants.userNameDefault), pass = defaults.stringForKey(APIManager.Constants.userPassDefault) else {
+            print("No previous login")
+            return
+        }
+        login(user, pass: pass)
         
     }
     

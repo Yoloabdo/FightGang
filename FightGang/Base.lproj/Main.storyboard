@@ -263,6 +263,9 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="413" height="35"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
+                                                <connections>
+                                                    <outlet property="delegate" destination="MfR-5c-eiz" id="Xmw-Nh-4EQ"/>
+                                                </connections>
                                             </textField>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INz-cA-XbI">
                                                 <rect key="frame" x="423" y="0.0" width="137" height="35"/>

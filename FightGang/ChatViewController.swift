@@ -110,7 +110,6 @@ extension ChatViewController: UITextFieldDelegate {
     // hitting next or done in keyboard
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         messageTextField.resignFirstResponder()
-        
         return true;
         
     }
