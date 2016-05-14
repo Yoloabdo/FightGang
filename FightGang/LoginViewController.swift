@@ -41,6 +41,13 @@ class LoginViewController: UIViewController {
 //            return
 //        }
 //        login(user, pass: pass)
+        
+    }
+    
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewDidLoad()
+     
     }
     
     
@@ -189,6 +196,36 @@ extension LoginViewController: UITextFieldDelegate {
         userNameTextField.resignFirstResponder()
         passTextField.resignFirstResponder()
         aliasTextField.resignFirstResponder()
+    }
+    
+    func animateTextField(textField: UITextField, up: Bool, len: CGFloat) {
+        let movementDistance:CGFloat = -len
+        let movementDuration: Double = 0.3
+        
+        var movement:CGFloat = 0
+        if up {
+            movement = movementDistance
+        }
+        else {
+            movement = -movementDistance
+        }
+        UIView.beginAnimations("animateTextField", context: nil)
+        UIView.setAnimationBeginsFromCurrentState(true)
+        UIView.setAnimationDuration(movementDuration)
+        self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+        UIView.commitAnimations()
+    }
+
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        if textField == aliasTextField {
+            animateTextField(aliasTextField, up: true, len: 50)
+        }
+        return true
+    }
+    func textFieldDidEndEditing(textField: UITextField) {
+        if textField == aliasTextField {
+            animateTextField(aliasTextField, up: false, len: 50)
+        }
     }
 
 

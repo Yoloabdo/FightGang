@@ -321,10 +321,9 @@ class APIManager: NSObject {
     
     
     func chatSendMessage(message: String) -> Void {
-        let body = "{\n  \"message\": \"\(message)\"\n}"
+        let body = "{\n  \"message\": \"Come at me, bro!\"\n}"
         taskWithMethod("\(APIManager.Methods.Chat)", method: "POST", HTTPBody: body) { (result, error) in
-            
-            print(result)
+            print(error?.localizedDescription)
         }
     }
     
@@ -426,5 +425,6 @@ class APIManager: NSObject {
         }
         return Singleton.sharedInstance
     }
+    
     
 }

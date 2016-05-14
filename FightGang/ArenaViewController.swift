@@ -46,8 +46,6 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
             
             self.arenaRespnseHandler(players)
-            
-            
         }
        
 

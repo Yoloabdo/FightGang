@@ -10,6 +10,7 @@ import UIKit
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,35 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
+    
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: self.view.window)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: self.view.window)
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardHeight = (notification.userInfo! as NSDictionary).objectForKey(UIKeyboardFrameBeginUserInfoKey)?.CGRectValue.size.height else {
+            return
+        }
+        animateTextField(messageTextField, up: true, len: keyboardHeight)
+        view.layoutIfNeeded()
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        guard let keyboardHeight = (notification.userInfo! as NSDictionary).objectForKey(UIKeyboardFrameBeginUserInfoKey)?.CGRectValue.size.height else {
+            return
+        }
+        animateTextField(messageTextField, up: false, len: keyboardHeight)
+        view.layoutIfNeeded()
+    }
+    
+    
     @IBOutlet weak var chatTextField: UITextField!
 
     override func didReceiveMemoryWarning() {
@@ -73,3 +102,38 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
 }
+
+
+extension ChatViewController: UITextFieldDelegate {
+    
+    
+    // hitting next or done in keyboard
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        messageTextField.resignFirstResponder()
+        
+        return true;
+        
+    }
+    
+    
+    func animateTextField(textField: UITextField, up: Bool, len: CGFloat) {
+        let movementDistance:CGFloat = -len
+        let movementDuration: Double = 0.3
+        
+        var movement:CGFloat = 0
+        if up {
+            movement = movementDistance
+        }
+        else {
+            movement = -movementDistance
+        }
+        UIView.beginAnimations("animateTextField", context: nil)
+        UIView.setAnimationBeginsFromCurrentState(true)
+        UIView.setAnimationDuration(movementDuration)
+        self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+        UIView.commitAnimations()
+    }
+    
+    
+}
+
