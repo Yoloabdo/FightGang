@@ -50,7 +50,7 @@ class APIManager: NSObject {
    
    // MARK: -LOGIN function
     func  login(user: String, password: String, completion: (response:AnyObject) -> Void) {
-        print(user, password)
+
         defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
         defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         

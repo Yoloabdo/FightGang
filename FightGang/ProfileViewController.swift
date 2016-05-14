@@ -45,7 +45,7 @@ class ProfileViewController: UIViewController {
     func updateUI() -> Void {
         userAlias?.text = userProfile.alias
         userLevel?.text = "\(userProfile.level!)"
-        experience?.text = "\(userProfile.experience!)/\(userProfile.level!)00"
+        experience?.text = "\(userProfile.experience)/\(userProfile.expNext)"
         stamina?.text = "\(userProfile.stamina!)"
         totalHits?.text = "\(userProfile.hits!)"
         

@@ -34,3 +34,4 @@ class ChatLog: NSObject {
         self.sender = sender
     }
 }
+

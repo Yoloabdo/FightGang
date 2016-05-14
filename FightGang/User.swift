@@ -22,8 +22,8 @@ class User: NSObject {
     
     var maxStamina: Int?
     
-    var experience: Int?
-    
+    var experience: Int!
+    var expNext: Int!
     
     
         
@@ -58,7 +58,10 @@ class User: NSObject {
         }
         
         if let exp = dictionary["expNext"] as? Int {
-            self.experience = exp
+            self.expNext = exp
+        }
+        if let experience = dictionary["exp"] as? Int {
+            self.experience = experience
         }
         
         
