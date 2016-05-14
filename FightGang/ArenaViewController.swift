@@ -122,12 +122,18 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func getActivePlayers() -> Void {
-        print("Reloaded")
-        APIManager.sharedInstance().getActivePlayers { (response) in
+        APIManager.sharedInstance().getActivePlayers({ (players, error) in
             dispatch_async(dispatch_get_main_queue()) {
-                self.arenaRespnseHandler(response as! [User])
+                if error == nil {
+                    self.arenaRespnseHandler(players)
+                }else {
+                    self.showErrorAlert("Error", msg: error!)
+                }
             }
-        }
+
+            
+        })
+            
     }
     
     
