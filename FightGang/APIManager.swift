@@ -54,72 +54,50 @@ class APIManager: NSObject {
         defaults.setObject(user, forKey: APIManager.Constants.userIdDefault)
         defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         
-
-        taskWithMethod(APIManager.Methods.AccountLogin, method: "GET", HTTPBody: nil) { (result, error) in
-            
-            if error != nil {
-                self.defaults.setObject(nil, forKey: APIManager.Constants.userIdDefault)
-                self.defaults.setObject(nil, forKey: APIManager.Constants.userPassDefault)
-                completion(response: "Error on signin, \(error?.localizedDescription)")
-            }else{
-                do{
-                    let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
-                        print("succeful login/ register")
-                        let loginUser = User(dictionary: json)!
-                        self.defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
-                        completion(response: loginUser)
-            
-                }catch {
-                    completion(response: "Error serializing JSON for login user")
-                }
-            }
+        loginHelper(APIManager.Methods.AccountLogin, body: nil, method: "GET") { (response) in
+            completion(response: response)
         }
     }
 
     // MARK: -Register function
     func register(user: String, password: String, alias: String, completion: (response:AnyObject) -> Void) {
         
-        let url = NSURL(string: APIManager.Constants.BaseURL + APIManager.Methods.AccountRegister)
+        defaults.setObject(user, forKey: APIManager.Constants.userIdDefault)
+        defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
-        request.HTTPBody = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(password)\"\n}".dataUsingEncoding(NSUTF8StringEncoding)
+        let body = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(password)\"\n}"
         
-        
-        networkRequest(request) { (data, code) in
-            self.loginRequestHandling(user, pass: password, data: data, code: code, completion: { (response) in
-                completion(response: response)
-                
-            })
+        loginHelper(APIManager.Methods.AccountRegister, body: body, method: "POST") { (response) in
+            completion(response: response)
         }
     }
     
-    // login/register helper function
-    func  loginRequestHandling(user: String, pass: String, data: NSData, code: Int,completion: (response:AnyObject) -> Void) -> Void {
-        do{
-            let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-            if code == 200 || code == 201{
-                print("succeful login/ register")
-                let loginUser = User(dictionary: json)!
-                self.defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
-                self.defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
-                self.defaults.setObject(pass, forKey: APIManager.Constants.userPassDefault)
-                
-                completion(response: loginUser)
-                return
-            }else {
-                print("Error login/ register")
-                completion(response: json["message"]!)
-                return
+    private func loginHelper(url: String, body: String?, method: String, completion: (response:AnyObject) -> Void) {
+        
+        taskWithMethod(url, method: method, HTTPBody: body) { (result, error) in
+            
+            if error != nil {
+                self.defaults.setObject(nil, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(nil, forKey: APIManager.Constants.userPassDefault)
+                completion(response: "Error on sign/register, \(error!.localizedDescription)")
+            }else{
+                do{
+                    let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
+                    print("succeful login/ register")
+                    let loginUser = User(dictionary: json)!
+                    self.defaults.setObject(loginUser.id, forKey: APIManager.Constants.userIdDefault)
+                    completion(response: loginUser)
+                    
+                }catch {
+                    completion(response: "Error serializing JSON for login user")
+                }
             }
-        }catch {
-            completion(response: "Error serializing JSON for login user")
+            
+            
         }
-        
-        
+
     }
+
     
     // MARK: -Arena networking
     
@@ -274,32 +252,32 @@ class APIManager: NSObject {
     
 
     // MARK: -NetWork request
-    private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
-    {
-        // loading network indicator
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-        
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if let response = response as? NSHTTPURLResponse, data = data {
-                // check login status via response code
-                dispatch_async(dispatch_get_main_queue()) {
-                    // lay off indicator
-                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-                    // return results
-                    completion(data: data, responseCode: response.statusCode)
-                }
-            }
-                
-            else {
-                print(error)
-                return
-            }
-        }
-        task.resume()
-        
-        
-    }
+//    private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
+//    {
+//        // loading network indicator
+//        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+//        
+//        let session = NSURLSession.sharedSession()
+//        let task = session.dataTaskWithRequest(request) { data, response, error in
+//            if let response = response as? NSHTTPURLResponse, data = data {
+//                // check login status via response code
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    // lay off indicator
+//                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+//                    // return results
+//                    completion(data: data, responseCode: response.statusCode)
+//                }
+//            }
+//                
+//            else {
+//                print(error)
+//                return
+//            }
+//        }
+//        task.resume()
+//        
+//        
+//    }
 
     
 
