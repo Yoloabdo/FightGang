@@ -52,10 +52,12 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     override func viewWillDisappear(animated: Bool) {
-        super.viewDidLoad()
+        super.viewWillDisappear(animated)
+        // notification center
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: self.view.window)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: self.view.window)
         
+        // socket
         SocketIOManager.sharedInstance().chatUpdatesOff()
     }
     
