@@ -286,34 +286,30 @@ class APIManager: NSObject {
     
     // MARK: -Chat networking
     
-    func getChatLogs(completion:(chatArray: AnyObject) -> Void) -> Void {
+    func getChatLogs(completion:(chatArray: [ChatLog]!, error: String?) -> Void) -> Void {
         
         taskWithMethod("\(APIManager.Methods.Chat)", method: "GET", HTTPBody: nil) { (result, error) in
             
             if error == nil{
-                self.chatResponseHandler(result as! NSData, code: 200, completion: { (chatArray) in
-                    completion(chatArray: chatArray)
+                self.chatResponseHandler(result as! NSData, completion: { (chatArray, error) in
+                    completion(chatArray: chatArray, error: error)
                 })
             }
         }
 
     }
     
-    func chatResponseHandler(JsonData: NSData, code: Int, completion:(chatArray: AnyObject) -> Void) -> Void {
-        if code != 200 {
-            completion(chatArray: "Network error \(code)")
-            return
-        }
+    func chatResponseHandler(JsonData: NSData, completion:(chatArray: [ChatLog]!, error: String?) -> Void) -> Void {
         do{
             let json = try NSJSONSerialization.JSONObjectWithData(JsonData, options: .AllowFragments) as! [JsonObject]
             var chatLogs = [ChatLog]()
             for chat in json {
                 chatLogs.append(ChatLog(obj: chat))
             }
-            completion(chatArray: chatLogs)
+            completion(chatArray: chatLogs, error: nil)
             
         }catch {
-            completion(chatArray: "Error serializing JSON for login user")
+            completion(chatArray: nil, error:  "Error serializing JSON for login user")
         }
 
     }

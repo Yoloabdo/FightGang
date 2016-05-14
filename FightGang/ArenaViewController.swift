@@ -52,6 +52,14 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
        
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        // lay off socket and notifications
+        SocketIOManager.sharedInstance().arenaoff()
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: APIManager.Notifications.AttackNotification, object: nil)
+    }
+    
+    
     func postAlert(not: NSNotification) -> Void {
         dispatch_async(dispatch_get_main_queue()) {
             let error = not.object as! String

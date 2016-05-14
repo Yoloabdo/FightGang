@@ -15,22 +15,28 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        APIManager.sharedInstance().getChatLogs { logs in
+        APIManager.sharedInstance().getChatLogs { logs, error in
             dispatch_async(dispatch_get_main_queue()) {
-               self.handleChatResponse(logs)
+                if error == nil {
+                    self.handleChatResponse(logs)
+                }else{
+                    self.showErrorAlert("Error", msg: error!)
+                }
             }
             
             
         }
         // keyboard notifications UX for messageTextField
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardNotfication), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardNotfication), name: UIKeyboardWillHideNotification, object: nil)
         
         // Socket for chat messages. 
         
         SocketIOManager.sharedInstance().chatUpdates { (messages) in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
             dispatch_async(dispatch_get_main_queue()) {
                 self.handleChatResponse(messages)
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
             }
             
         }
@@ -53,22 +59,24 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         SocketIOManager.sharedInstance().chatUpdatesOff()
     }
     
-    func keyboardWillShow(notification: NSNotification) {
+    // handles view when keyboard appears or disaapears
+    var movedView = true
+    func keyboardNotfication(notification: NSNotification) {
         guard let keyboardHeight = (notification.userInfo! as NSDictionary).objectForKey(UIKeyboardFrameBeginUserInfoKey)?.CGRectValue.size.height else {
             return
         }
-        animateTextField(messageTextField, up: true, len: keyboardHeight)
-        view.layoutIfNeeded()
-    }
-    
-    func keyboardWillHide(notification: NSNotification) {
-        guard let keyboardHeight = (notification.userInfo! as NSDictionary).objectForKey(UIKeyboardFrameBeginUserInfoKey)?.CGRectValue.size.height else {
-            return
+        if movedView {
+            animateTextField(messageTextField, up: movedView, len: keyboardHeight)
+            view.layoutIfNeeded()
+            movedView = false
+        }else {
+            animateTextField(messageTextField, up: movedView, len: keyboardHeight)
+            view.layoutIfNeeded()
+            movedView = true
         }
-        animateTextField(messageTextField, up: false, len: keyboardHeight)
-        view.layoutIfNeeded()
+        
     }
-    
+
     
     @IBOutlet weak var chatTextField: UITextField!
 

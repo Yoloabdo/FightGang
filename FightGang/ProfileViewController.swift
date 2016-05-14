@@ -51,5 +51,9 @@ class ProfileViewController: UIViewController {
         
     }
 
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        SocketIOManager.sharedInstance().playerHealOff()
+    }
 
 }
