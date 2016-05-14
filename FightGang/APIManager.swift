@@ -251,34 +251,6 @@ class APIManager: NSObject {
     }
     
 
-    // MARK: -NetWork request
-//    private func networkRequest(request: NSURLRequest, completion:(data:NSData, responseCode: Int) -> Void)
-//    {
-//        // loading network indicator
-//        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-//        
-//        let session = NSURLSession.sharedSession()
-//        let task = session.dataTaskWithRequest(request) { data, response, error in
-//            if let response = response as? NSHTTPURLResponse, data = data {
-//                // check login status via response code
-//                dispatch_async(dispatch_get_main_queue()) {
-//                    // lay off indicator
-//                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-//                    // return results
-//                    completion(data: data, responseCode: response.statusCode)
-//                }
-//            }
-//                
-//            else {
-//                print(error)
-//                return
-//            }
-//        }
-//        task.resume()
-//        
-//        
-//    }
-
     
 
     func taskWithMethod(apiURL: String, method: String, HTTPBody: String?, completionHandlerForPOST: (result: NSData!, error: NSError?) -> Void) -> Void {
