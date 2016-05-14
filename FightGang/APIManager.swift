@@ -232,8 +232,6 @@ class APIManager: NSObject {
         request.setValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
         request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
-        
-        
         networkRequest(request) { (data, code) in
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! [JsonObject]
@@ -266,21 +264,19 @@ class APIManager: NSObject {
     // MARK: -Me profile 
     
     func getMainProfile(completion: (playerProfile:AnyObject) -> Void) -> Void {
-        let url = NSURL(string: "\(APIManager.Constants.BaseURL)/players/me")!
-        let request = NSMutableURLRequest(URL: url)
-        request.addValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
-        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
-        networkRequest(request) { (data, responseCode) in
+        taskWithMethod("/players/me", method: "GET", HTTPBody: nil) { (result, error) in
+            
             do{
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! JsonObject
-                    completion(playerProfile: User(dictionary: json)!)
+                let json = try NSJSONSerialization.JSONObjectWithData(result as! NSData, options: .AllowFragments) as! JsonObject
+                completion(playerProfile: User(dictionary: json)!)
                 
             }catch {
                 completion(playerProfile: "Error serializing JSON for login user")
             }
 
         }
+        
     }
     
     
