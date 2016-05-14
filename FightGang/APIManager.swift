@@ -162,8 +162,8 @@ class APIManager: NSObject {
     
     // Error solved, works well now!
     func attackPLayer(id: Int) -> Void {
-        attackPlayer(id) { (response) in
-            print(response)
+        attackPlayer(id) { _ in
+//            print(response)
         }
     }
     
@@ -174,14 +174,7 @@ class APIManager: NSObject {
                 completion(response: "\(error!.localizedFailureReason!)")
                 return
             }
-            
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
-                completion(response: "Attack complete")
-            } catch{
-                completion(response: "Error serializing JSON for the attack")
-                
-            }
+            completion(response: "Attack is okay")
         }
     }
     
