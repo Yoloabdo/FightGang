@@ -32,7 +32,14 @@ class ProfileViewController: UIViewController {
             }
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(updateUI), name: SocketIOManager.Constants.AnyNotfication, object: nil)
+    
+        SocketIOManager.sharedInstance().playersHeal { (healInfo) in
+            dispatch_async(dispatch_get_main_queue()) {
+                let info = healInfo as! JsonObject
+                self.stamina?.text = "\(info["16"]!)"
+            }
+        }
+        
     }
     
     func updateUI() -> Void {

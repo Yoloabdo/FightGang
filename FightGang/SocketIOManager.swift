@@ -59,11 +59,22 @@ class SocketIOManager: NSObject {
         
     }
     
+    func arenaoff() -> Void {
+        socket.off("arena")
+        socket.off("attack")
+    }
+    
+    
+    
     
     func playersHeal(completionHandler: AnyObject -> Void) {
         socket.on("heal") { (dataArray, emit) in
-            completionHandler(dataArray[0] as! [[String: AnyObject]])
+            completionHandler(dataArray[0] as! [String: AnyObject])
         }
+    }
+    
+    func playerHealOff() -> Void {
+        socket.off("heal")
     }
 
     func chatUpdates(completionHandler: AnyObject -> Void) {
@@ -71,13 +82,11 @@ class SocketIOManager: NSObject {
             completionHandler(dataArray[0] as! [[String: AnyObject]])
         }
     }
-    func arenaoff() -> Void {
-        socket.off("arena")
-        socket.off("attack")
-        socket.off("heal")
+    func chatUpdatesOff() {
+        socket.off("chat")
     }
     
-    
+   
     
     
     // MARK: Shared Instance

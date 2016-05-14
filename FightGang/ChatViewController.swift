@@ -10,7 +10,6 @@ import UIKit
 
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,26 +17,40 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         // Do any additional setup after loading the view.
         APIManager.sharedInstance().getChatLogs { logs in
             dispatch_async(dispatch_get_main_queue()) {
-                guard let chatlogs = logs as? [ChatLog] else {
-                    self.showErrorAlert("Error Loading", msg: logs as! String)
-                    return
-                }
-                self.chatData = chatlogs
-                self.tableView.reloadData()
+               self.handleChatResponse(logs)
             }
             
             
         }
-        
+        // keyboard notifications UX for messageTextField
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillShow(_:)), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ChatViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        
+        // Socket for chat messages. 
+        
+        SocketIOManager.sharedInstance().chatUpdates { (messages) in
+            dispatch_async(dispatch_get_main_queue()) {
+                self.handleChatResponse(messages)
+            }
+            
+        }
     }
     
+    func handleChatResponse(logs: AnyObject) {
+        guard let chatlogs = logs as? [ChatLog] else {
+            self.showErrorAlert("Error Loading", msg: logs as! String)
+            return
+        }
+        self.chatData = chatlogs
+        self.tableView.reloadData()
+    }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: self.view.window)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: self.view.window)
+        
+        SocketIOManager.sharedInstance().chatUpdatesOff()
     }
     
     func keyboardWillShow(notification: NSNotification) {
