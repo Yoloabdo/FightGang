@@ -11,9 +11,33 @@ import UIKit
 class ChatViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var chatTextField: UITextField!
+
+  
+    
+    @IBOutlet weak var messageTextField: UITextField!
+    
+    @IBAction func sendMessage(sender: UIButton) {
+        APIManager.sharedInstance().chatSendMessage(messageTextField.text!){ result in
+            dispatch_async(dispatch_get_main_queue()) {
+                self.showErrorAlert("Error", msg: result)
+            }
+        }
+        chatTextField.text = ""
+    }
+    
+    var chatData = [ChatLog]()
+    
+    struct StoryBoard {
+        static let CellId = "ChatCell"
+    }
+    
+    //MARK: -Helpers
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         APIManager.sharedInstance().getChatLogs { logs, error in
             dispatch_async(dispatch_get_main_queue()) {
@@ -30,7 +54,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardNotfication), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardNotfication), name: UIKeyboardWillHideNotification, object: nil)
         
-        // Socket for chat messages. 
+        // Socket for chat messages.
         
         SocketIOManager.sharedInstance().chatUpdates { (messages) in
             UIApplication.sharedApplication().networkActivityIndicatorVisible = true
@@ -78,27 +102,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         }
         
     }
+    
 
-    
-    @IBOutlet weak var chatTextField: UITextField!
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBOutlet weak var messageTextField: UITextField!
-    
-    @IBAction func sendMessage(sender: UIButton) {
-        APIManager.sharedInstance().chatSendMessage(messageTextField.text!)
-    }
-    
-    var chatData = [ChatLog]()
-    
-    struct StoryBoard {
-        static let CellId = "ChatCell"
-    }
-    
     
     // MARK: -UITable
     
@@ -126,7 +131,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
 }
 
-
+//MARK: -TextFieldDelegate
 extension ChatViewController: UITextFieldDelegate {
     
     

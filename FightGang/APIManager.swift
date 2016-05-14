@@ -197,7 +197,7 @@ class APIManager: NSObject {
     
     func getMainProfile(completion: (playerProfile:AnyObject) -> Void) -> Void {
         
-        taskWithMethod("/players/me", method: "GET", HTTPBody: nil) { (result, error) in
+        taskWithMethod(APIManager.Methods.AccountLogin, method: "GET", HTTPBody: nil) { (result, error) in
             
             do{
                 let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
@@ -242,11 +242,12 @@ class APIManager: NSObject {
 
     }
     
-    
-    func chatSendMessage(message: String) -> Void {
+    // this too yeilds error from API no matter what i do, dunno where's the problem?? still lacks implementation
+    func chatSendMessage(message: String, completion: (message: String) -> Void) -> Void {
         let body = "{\n  \"message\": \"Come at me, bro!\"\n}"
-        taskWithMethod("\(APIManager.Methods.Chat)", method: "POST", HTTPBody: body) { (result, error) in
-            print(error?.localizedDescription)
+        
+        taskWithMethod(APIManager.Methods.Chat, method: "POST", HTTPBody: body) { (result, error) in
+            completion(message: error!.localizedDescription)
         }
     }
     

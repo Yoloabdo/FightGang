@@ -25,11 +25,6 @@ class SocketIOManager: NSObject {
     func establishConnection() {
         socket.connect()
         print("connected")
-        
-        socket.onAny { (event) in
-            NSNotificationCenter.defaultCenter().postNotificationName(SocketIOManager.Constants.AnyNotfication, object: nil)
-            
-        }
     }
     
     
