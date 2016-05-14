@@ -63,6 +63,7 @@ class LoginViewController: UIViewController {
 
     }
 
+    // setting CALayer properties
     func borderlayer(layer: CALayer, color: UIColor) -> Void {
         layer.cornerRadius = 5
         layer.borderWidth = 1
@@ -136,7 +137,6 @@ class LoginViewController: UIViewController {
             return false
         }
         
-        
         if !user.isEmpty && !pass.isEmpty{
             return true
         }
@@ -197,7 +197,7 @@ extension LoginViewController: UITextFieldDelegate {
         passTextField.resignFirstResponder()
         aliasTextField.resignFirstResponder()
     }
-    
+    // moving textField to get infront of the user above keyBoard
     func animateTextField(textField: UITextField, up: Bool, len: CGFloat) {
         let movementDistance:CGFloat = -len
         let movementDuration: Double = 0.3

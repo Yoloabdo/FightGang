@@ -290,7 +290,7 @@
                                 <rect key="frame" x="20" y="64" width="560" height="442"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatCell" textLabel="g0I-oh-eHU" detailTextLabel="72P-8j-bwl" style="IBUITableViewCellStyleSubtitle" id="klk-dW-g2F" customClass="ChatTableViewCell" customModule="FightGang" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatCell" textLabel="g0I-oh-eHU" detailTextLabel="72P-8j-bwl" style="IBUITableViewCellStyleSubtitle" id="klk-dW-g2F">
                                         <rect key="frame" x="0.0" y="28" width="560" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="klk-dW-g2F" id="tx8-w0-g0n">

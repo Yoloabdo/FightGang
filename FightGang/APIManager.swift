@@ -287,17 +287,16 @@ class APIManager: NSObject {
     // MARK: -Chat networking
     
     func getChatLogs(completion:(chatArray: AnyObject) -> Void) -> Void {
-        let url = NSURL(string: "\(APIManager.Constants.BaseURL)\(APIManager.Methods.Chat)")!
-        let request = NSMutableURLRequest(URL: url)
-        request.addValue("Basic \(Auth!)", forHTTPHeaderField: "Authorization")
-        request.addValue(APIManager.Constants.API_KEY, forHTTPHeaderField: "X-Api-Token")
         
-        networkRequest(request) { (data, responseCode) in
+        taskWithMethod("\(APIManager.Methods.Chat)", method: "GET", HTTPBody: nil) { (result, error) in
             
-            self.chatResponseHandler(data, code: responseCode, completion: { (chatArray) in
-                completion(chatArray: chatArray)
-            })
+            if error == nil{
+                self.chatResponseHandler(result as! NSData, code: 200, completion: { (chatArray) in
+                    completion(chatArray: chatArray)
+                })
+            }
         }
+
     }
     
     func chatResponseHandler(JsonData: NSData, code: Int, completion:(chatArray: AnyObject) -> Void) -> Void {
