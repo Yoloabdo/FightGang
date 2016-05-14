@@ -11,6 +11,7 @@ import UIKit
 class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var arenaSegmentController: UISegmentedControl!
 
  
     var canAttack = false
@@ -24,14 +25,15 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // listen to notification 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(postAlert), name: APIManager.Notifications.AttackNotification, object: nil)
         
-//         load data 
+        
+        //load data
         getActivePlayers()
-        
-        
+    
+       
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         // listen to socket
         // start live update from socket
         SocketIOManager.sharedInstance().arenaCheck { (results) in
@@ -47,25 +49,29 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
             
             self.arenaRespnseHandler(players)
         }
-       
-
-       
+        
+        
+        SocketIOManager.sharedInstance().arenaOnAttack { (attackRes) in
+            let res = attackRes as! JsonObject
+            guard let op = res["defender"] as? JsonObject, damage = res["damage"] as? Int else {
+                self.showErrorAlert("Error", msg:"Error parsing JSON for the attack")
+                return
+            }
+            self.showErrorAlert("You attacked \(User(dictionary: op)!.alias!) for \(damage) damage.", msg: "")
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        canAttack = false
+        
+        arenaSegmentController.selectedSegmentIndex = 0
         // lay off socket and notifications
         SocketIOManager.sharedInstance().arenaoff()
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: APIManager.Notifications.AttackNotification, object: nil)
+
         leavePlayersArena()
-    }
-    
-    
-    func postAlert(not: NSNotification) -> Void {
-        dispatch_async(dispatch_get_main_queue()) {
-            let error = not.object as! String
-            self.showErrorAlert("Error", msg: error)
-        }
+        
     }
     
     deinit {
@@ -78,14 +84,9 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
     @IBAction func joinArena(sender: UISegmentedControl) {
         
         if sender.selectedSegmentIndex == 0 {
-            canAttack = false
-
-            // off socket
-            SocketIOManager.sharedInstance().arenaoffAttack()
             
            leavePlayersArena()
         }else {
-            canAttack = true
             joinPlayersArena()
             
         }
@@ -98,6 +99,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         APIManager.sharedInstance().enteringArena { (players, error) in
             dispatch_async(dispatch_get_main_queue()) {
                 if error == nil {
+                    self.canAttack = true
                     self.arenaRespnseHandler(players)
                 }else {
                     self.showErrorAlert("Error", msg: error!)
@@ -111,6 +113,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         APIManager.sharedInstance().leavingArena({ (players, error) in
             dispatch_async(dispatch_get_main_queue()) {
                 if error == nil {
+                    self.canAttack = false
                     self.arenaRespnseHandler(players)
                 }else {
                     self.showErrorAlert("Error", msg: error!)

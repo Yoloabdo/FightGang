@@ -160,19 +160,16 @@ class APIManager: NSObject {
     
 
     
-    // there's unknown error with this, it's always "message": "The other player has stepped out!",
-    //    "status": 403, even if the player is there and all checked via soket too.
-    // handling wasn't finished well accordingly.
+    // Error solved, works well now!
     func attackPLayer(id: Int) -> Void {
         attackPlayer(id) { (response) in
             print(response)
-            NSNotificationCenter.defaultCenter().postNotificationName(APIManager.Notifications.AttackNotification, object: response)
         }
     }
     
-    func attackPlayer(id: Int, completion: (response: String) -> Void){
+    private func attackPlayer(id: Int, completion: (response: String) -> Void){
         
-        taskWithMethod("arena/attack/:id", method: "POST", HTTPBody: nil) { (result, error) in
+        taskWithMethod(APIManager.Methods.Attack + "\(id)", method: "POST", HTTPBody: nil) { (result, error) in
             if error != nil{
                 completion(response: "\(error!.localizedFailureReason!)")
                 return
@@ -180,11 +177,7 @@ class APIManager: NSObject {
             
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
-                guard let op = json["defender"] as? User, alias = op.alias else {
-                    completion(response: "Error \(json["message"])")
-                    return
-                }
-                completion(response: "You attacked \(alias) \(json["damage"])")
+                completion(response: "Attack complete")
             } catch{
                 completion(response: "Error serializing JSON for the attack")
                 
@@ -264,7 +257,6 @@ class APIManager: NSObject {
         
         /* 1. Set the URL */
         let url = NSURL(string: APIManager.Constants.BaseURL+apiURL)!
-        
         /* 2/3. Build the URL, Configure the request */
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = method

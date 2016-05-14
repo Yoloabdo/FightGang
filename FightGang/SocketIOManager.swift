@@ -44,7 +44,7 @@ class SocketIOManager: NSObject {
     
     func arenaOnAttack(completionHandler: AnyObject -> Void){
         socket.on("attack") { (dataArray, emit) in
-            completionHandler(dataArray[0] as! [[String: AnyObject]])
+            completionHandler(dataArray[0] as! [String: AnyObject])
         }
     }
 

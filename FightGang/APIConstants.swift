@@ -31,6 +31,7 @@ extension APIManager {
         
         // Arena 
         static let Arena = "/arena"
+        static let Attack = "/arena/attack/"
     }
     
     

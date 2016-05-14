@@ -45,11 +45,6 @@ class LoginViewController: UIViewController {
     }
     
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewDidLoad()
-     
-    }
-    
     
     func enableBtn(btn: UIButton) -> Void {
         btn.enabled = true

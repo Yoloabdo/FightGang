@@ -507,6 +507,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="FIGHT GANG" id="apD-uh-BL6"/>
                     <connections>
+                        <outlet property="arenaSegmentController" destination="yt1-B0-Jf7" id="O3G-u1-iWE"/>
                         <outlet property="tableView" destination="oDT-eq-L2m" id="PgR-3t-IJ7"/>
                     </connections>
                 </viewController>

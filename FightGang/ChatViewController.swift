@@ -35,8 +35,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     
     //MARK: -Helpers
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         
         // Do any additional setup after loading the view.
         APIManager.sharedInstance().getChatLogs { logs, error in
@@ -64,6 +64,7 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
             }
             
         }
+
     }
     
     func handleChatResponse(logs: AnyObject) {
