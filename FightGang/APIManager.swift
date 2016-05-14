@@ -49,9 +49,9 @@ class APIManager: NSObject {
     
    
    // MARK: -LOGIN function
-    func  login(user: String?, password: String?, completion: (response:AnyObject) -> Void) {
-        
-        defaults.setObject(user, forKey: APIManager.Constants.userIdDefault)
+    func  login(user: String, password: String, completion: (response:AnyObject) -> Void) {
+        print(user, password)
+        defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
         defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         
         loginHelper(APIManager.Methods.AccountLogin, body: nil, method: "GET") { (response) in
@@ -62,7 +62,7 @@ class APIManager: NSObject {
     // MARK: -Register function
     func register(user: String, password: String, alias: String, completion: (response:AnyObject) -> Void) {
         
-        defaults.setObject(user, forKey: APIManager.Constants.userIdDefault)
+        defaults.setObject(user, forKey: APIManager.Constants.userNameDefault)
         defaults.setObject(password, forKey: APIManager.Constants.userPassDefault)
         
         let body = "{\n  \"name\": \"\(user)\",\n  \"alias\": \"\(alias)\",\n  \"password\": \"\(password)\"\n}"
@@ -77,7 +77,7 @@ class APIManager: NSObject {
         taskWithMethod(url, method: method, HTTPBody: body) { (result, error) in
             
             if error != nil {
-                self.defaults.setObject(nil, forKey: APIManager.Constants.userIdDefault)
+                self.defaults.setObject(nil, forKey: APIManager.Constants.userNameDefault)
                 self.defaults.setObject(nil, forKey: APIManager.Constants.userPassDefault)
                 completion(response: "Error on sign/register, \(error!.localizedFailureReason!)")
             }else{
