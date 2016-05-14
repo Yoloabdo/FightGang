@@ -79,7 +79,7 @@ class APIManager: NSObject {
             if error != nil {
                 self.defaults.setObject(nil, forKey: APIManager.Constants.userIdDefault)
                 self.defaults.setObject(nil, forKey: APIManager.Constants.userPassDefault)
-                completion(response: "Error on sign/register, \(error!.localizedDescription)")
+                completion(response: "Error on sign/register, \(error!.localizedFailureReason!)")
             }else{
                 do{
                     let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
@@ -135,7 +135,7 @@ class APIManager: NSObject {
     
     func arenaResponseHandler(result: AnyObject, error: NSError?, completion: (players:[User]!, error: String?) -> Void) -> Void {
         if error != nil{
-            completion(players: nil, error: "\(error!.localizedDescription)")
+            completion(players: nil, error: "\(error!.localizedFailureReason!)")
             return
         }
         guard let jsObj = result as? NSData else {
@@ -165,6 +165,7 @@ class APIManager: NSObject {
     // handling wasn't finished well accordingly.
     func attackPLayer(id: Int) -> Void {
         attackPlayer(id) { (response) in
+            print(response)
             NSNotificationCenter.defaultCenter().postNotificationName(APIManager.Notifications.AttackNotification, object: response)
         }
     }
@@ -173,7 +174,7 @@ class APIManager: NSObject {
         
         taskWithMethod("arena/attack/:id", method: "POST", HTTPBody: nil) { (result, error) in
             if error != nil{
-                completion(response: "\(error!.localizedDescription)")
+                completion(response: "\(error!.localizedFailureReason!)")
                 return
             }
             
@@ -198,15 +199,19 @@ class APIManager: NSObject {
     func getMainProfile(completion: (playerProfile:AnyObject) -> Void) -> Void {
         
         taskWithMethod(APIManager.Methods.AccountLogin, method: "GET", HTTPBody: nil) { (result, error) in
-            
-            do{
-                let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
-                completion(playerProfile: User(dictionary: json)!)
+            if error != nil {
+                completion(playerProfile: error!.localizedFailureReason!)
+            }else{
                 
-            }catch {
-                completion(playerProfile: "Error serializing JSON for login user")
-            }
+                do{
+                    let json = try NSJSONSerialization.JSONObjectWithData(result, options: .AllowFragments) as! JsonObject
+                    completion(playerProfile: User(dictionary: json)!)
+                    
+                }catch {
+                    completion(playerProfile: "Error serializing JSON for login user")
+                }
 
+            }
         }
         
     }
@@ -217,8 +222,9 @@ class APIManager: NSObject {
     func getChatLogs(completion:(chatArray: [ChatLog]!, error: String?) -> Void) -> Void {
         
         taskWithMethod("\(APIManager.Methods.Chat)", method: "GET", HTTPBody: nil) { (result, error) in
-            
-            if error == nil{
+            if error != nil {
+                completion(chatArray: nil, error: error!.localizedFailureReason!)
+            }else{
                 self.chatResponseHandler(result, completion: { (chatArray, error) in
                     completion(chatArray: chatArray, error: error)
                 })
@@ -247,7 +253,7 @@ class APIManager: NSObject {
         let body = "{\n  \"message\": \"Come at me, bro!\"\n}"
         
         taskWithMethod(APIManager.Methods.Chat, method: "POST", HTTPBody: body) { (result, error) in
-            completion(message: error!.localizedDescription)
+            completion(message: error!.localizedFailureReason!)
         }
     }
     
@@ -279,8 +285,15 @@ class APIManager: NSObject {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 
             func sendError(error: String) {
-                let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPOST(result: nil, error: NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                var userInfo = [NSLocalizedDescriptionKey : error]
+                
+                do {
+                    let errorMessage = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments) as? JsonObject
+                    userInfo[NSLocalizedFailureReasonErrorKey] = errorMessage!["message"] as? String
+                    completionHandlerForPOST(result: nil, error: NSError(domain: "taskWithMethod", code: 1, userInfo: userInfo))
+                }catch{
+                    completionHandlerForPOST(result: nil, error: NSError(domain: "taskWithMethod", code: 1, userInfo: userInfo))
+                }
             }
             
             /* GUARD: Was there an error? */

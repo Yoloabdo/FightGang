@@ -57,6 +57,7 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
         // lay off socket and notifications
         SocketIOManager.sharedInstance().arenaoff()
         NSNotificationCenter.defaultCenter().removeObserver(self, name: APIManager.Notifications.AttackNotification, object: nil)
+        leavePlayersArena()
     }
     
     
@@ -82,26 +83,16 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
             // off socket
             SocketIOManager.sharedInstance().arenaoffAttack()
             
-            // calling API
-            APIManager.sharedInstance().leavingArena({ (players, error) in
-                dispatch_async(dispatch_get_main_queue()) {
-                    if error == nil {
-                        self.arenaRespnseHandler(players)
-                    }else {
-                        self.showErrorAlert("Error", msg: error!)
-                    }
-
-                }
-            })
+           leavePlayersArena()
         }else {
             canAttack = true
-            joinArenaPlayers()
+            joinPlayersArena()
             
         }
         
     }
     
-    func joinArenaPlayers() -> Void {
+    func joinPlayersArena() -> Void {
         
 
         APIManager.sharedInstance().enteringArena { (players, error) in
@@ -114,11 +105,24 @@ class ArenaViewController: UIViewController, UITableViewDelegate, UITableViewDat
             }
         }
     }
+    
+    func leavePlayersArena() -> Void  {
+        // calling API
+        APIManager.sharedInstance().leavingArena({ (players, error) in
+            dispatch_async(dispatch_get_main_queue()) {
+                if error == nil {
+                    self.arenaRespnseHandler(players)
+                }else {
+                    self.showErrorAlert("Error", msg: error!)
+                }
+                
+            }
+        })
+    }
 
     func arenaRespnseHandler(players: [User]) -> Void {
         self.dataArray = players
         self.tableView.reloadData()
-
     }
     
     func getActivePlayers() -> Void {
